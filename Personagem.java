@@ -1,17 +1,21 @@
 public class Personagem {
 
-    protected String nome;
-    protected int vida;
-    protected int fome;
-    protected int sede;
-    protected int energia;
-    protected int sanidade;
-    private Inventario inventario;
+    private String nome;
+    private int vida;
+    private int fome;
+    private int sede;
+    private int energia;
+    private int sanidade;
 
-    public void setName(String nome) {
+    public Personagem(String nome, int vida, int fome, int sede, int energia, int sanidade) {
         this.nome = nome;
-    } 
-
+        this.vida = vida;
+        this.fome = fome;
+        this.sede = sede;
+        this.energia = energia;
+        this.sanidade = sanidade;
+    }
+     
     public String getName() {
         return this.nome;
     }

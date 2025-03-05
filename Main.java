@@ -6,8 +6,14 @@ public class Main {
 
         Personagem jogador = null;
 
+        // title card
         System.out.println("Welcome to The Last Frontier!");
 
+        // name input
+        System.out.print("Name your character: ");
+        String name = input.nextLine();
+
+        // class input
         System.out.printf("Select a class:%n1 - Rastreador%n2 - Mecânico%n3 - Médico%n4 - Sobrevivente Nato%n");
        
         int answer;
@@ -31,25 +37,21 @@ public class Main {
 
         input.nextLine(); // consome o new line
 
+        // creates the player
         if (answer == 1) {
-            jogador = new Rastreador();
+            jogador = new Rastreador(name);
         } else if (answer == 2) {
-            jogador = new Mecanico();
+            jogador = new Mecanico(name);
         } else if (answer == 3) {
-            jogador = new Medico();
+            jogador = new Medico(name);
         } else {
-            jogador = new SobreviventeNato();
+            jogador = new SobreviventeNato(name);
         }
-        
-        System.out.print("Name your character: ");
-        String name = input.nextLine();
 
-        jogador.setName(name);
-
-        
         System.out.printf("Good Luck %s!%n", jogador.getName());
 
-        int turnos = 0;
+        // main game loop
+        int turnos = 1;
         while (true) {
 
             /* Fase de inicio */
@@ -59,7 +61,7 @@ public class Main {
             System.out.printf("What do you wish to do?%n 1 - Nothing%nYour answer: ");
             int ans = input.nextInt();
 
-            if (turnos == 4) {
+            if (turnos == 2) {
                 System.out.println("The game has ended, thank you for playing!");
                 break;
             }
