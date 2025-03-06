@@ -6,7 +6,7 @@ public class Main {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
 
-        Personagem jogador = null;
+        Personagem jogador;
 
         GerenciadorDeAmbientes gerenciadorAmbientes = new GerenciadorDeAmbientes();
 
@@ -56,7 +56,7 @@ public class Main {
 
         System.out.printf("Good Luck %s!%n", jogador.getName());
 
-        // main game loop
+        /* ------------- Main game loop ---------------- */
         int turnos = 1;
         while (true) {
 
