@@ -1,0 +1,14 @@
+package itens.materiais;
+
+import itens.Item;
+
+public class Material extends Item {
+    private String tipo;
+    private int resistencia;
+
+    public Material(String nome, int peso, int durabilidade, String tipo, int resistencia) {
+        super(nome, peso, durabilidade);
+        this.tipo = tipo;
+        this.resistencia = resistencia;
+    }
+}

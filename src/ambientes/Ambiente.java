@@ -1,20 +1,33 @@
 package ambientes;
 
+import itens.*;
 import personagens.*;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Ambiente {
+    // atributos
     private String nome;
     private String descricao;
     private int dificuldadeExploracao;
     private String clima;
-    private String[] recursos;
+    private List<Item> recursos;
 
-    public Ambiente(String nome, String descricao, int dificuldadeExploracao, String clima, String[] recursos) {
+    // construtor
+    public Ambiente(String nome, String descricao, int dificuldadeExploracao, String clima) {
         this.nome = nome;
         this.descricao = descricao;
         this.dificuldadeExploracao = dificuldadeExploracao;
         this.clima = clima;
-        this.recursos = recursos;
+        this.recursos = new ArrayList<>();
+        adicionarRecursos();
+    }
+
+    // metodos
+    public void adicionarRecursos() {}
+
+    public void adicionarItem(Item item) {
+        recursos.add(item);
     }
 
     public void informacao() {
@@ -34,6 +47,7 @@ public class Ambiente {
 
     }
 
+    // gets
     public String getName() {
         return this.nome;
     }

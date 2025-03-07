@@ -5,8 +5,7 @@ public class AmbienteFloresta extends Ambiente{
         super("Floresta",
                 "Um local de vegetação densa e fauna abundante",
                 50,
-                "úmido",
-                new String[] {"Frutas", "Raízes", "Cogumelos", "Madeira"});
+                "úmido");
     }
 
     public String getDescricao() {

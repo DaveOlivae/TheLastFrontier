@@ -1,13 +1,18 @@
 package ambientes;
 
+// TODO : resover encontro de itens nos ambientes
+
+import itens.*;
+import java.util.List;
+import java.util.ArrayList;
+
 public class AmbienteCaverna extends Ambiente{
 
     public AmbienteCaverna() {
         super("Caverna",
                 "Um ambiente subterrâneo e muito escuro.",
                 100,
-                "úmido",
-                new String[] {"Minério de ferro", "Ossos de exploradores", "Rocha rara"});
+                "úmido");
     }
 
     public String getDescricao() {

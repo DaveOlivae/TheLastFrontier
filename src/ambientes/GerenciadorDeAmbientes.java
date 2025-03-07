@@ -22,14 +22,28 @@ public class GerenciadorDeAmbientes {
         int numero = random.nextInt(5);
 
         Ambiente novoAmbiente;
-        do {
+
+        // seleciona um novo ambiente e checa se ele n eh igual ao ultimo
+        while(true) {
             novoAmbiente = ambientesDisponiveis[numero];
-        } while (novoAmbiente.equals(historico.get(historico.size() - 1)));
+
+            if(!historico.isEmpty()) {
+                if(!novoAmbiente.equals(historico.getLast())) {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
 
         this.climaGlobal = novoAmbiente.getClima();
 
         historico.add(novoAmbiente);
 
         return novoAmbiente;
+    }
+
+    public String getClimaGlobal() {
+        return this.climaGlobal;
     }
 }
