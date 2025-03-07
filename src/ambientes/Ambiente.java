@@ -34,6 +34,10 @@ public class Ambiente {
 
     }
 
+    public String getName() {
+        return this.nome;
+    }
+
     public String getClima() {
         return this.clima;
     }

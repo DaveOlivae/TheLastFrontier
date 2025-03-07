@@ -64,7 +64,7 @@ public class Main {
             System.out.printf("Here are your attributes:%nLife: %d%nHunger: %d%nThirst: %d%nEnergy: %d%nSanity: %d%n", jogador.getVida(), jogador.getFome(),
                     jogador.getSede(), jogador.getEnergia(), jogador.getSanidade());
 
-            ambiente = gerenciadorAmbientes.mudarAmbiente(ambiente);
+            ambiente = gerenciadorAmbientes.mudarAmbiente();
             ambiente.informacao();
 
             System.out.printf("What do you wish to do?%n1 - Nothing%n2 - Explore%n3 - Check Inventory%nYour answer: ");

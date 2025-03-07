@@ -1,12 +1,12 @@
 package ambientes;
 
-public class AmbienteFloresta extends Ambiente{
-    public AmbienteFloresta() {
-        super("Floresta",
-                "Um local de vegetação densa e fauna abundante",
-                50,
+public class AmbienteRuinas extends Ambiente{
+    public AmbienteRuinas() {
+        super("Ruinas",
+                "Um ambiente subterrâneo e muito escuro.",
+                100,
                 "úmido",
-                new String[] {"Frutas", "Raízes", "Cogumelos", "Madeira"});
+                new String[] {"Minério de ferro", "Ossos de exploradores", "Rocha rara"});
     }
 
     public String getDescricao() {
