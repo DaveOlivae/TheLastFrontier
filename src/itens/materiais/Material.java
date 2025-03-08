@@ -11,4 +11,12 @@ public class Material extends Item {
         this.tipo = tipo;
         this.resistencia = resistencia;
     }
+
+    public void getAttributes() {
+        System.out.printf("- Nome: %s%n- Tipo: %s%n- Peso: %s%n", getNome(), getTipo(), getPeso());
+    }
+
+    public String getTipo() {
+        return this.tipo;
+    }
 }

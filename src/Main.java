@@ -10,7 +10,7 @@ public class Main {
 
         GerenciadorDeAmbientes gerenciadorAmbientes = new GerenciadorDeAmbientes();
 
-        Ambiente ambiente = null;
+        Ambiente ambiente;
 
         // title card
         System.out.println("Welcome to The Last Frontier!");
@@ -61,27 +61,45 @@ public class Main {
         while (true) {
 
             /* Fase de inicio */
-            System.out.printf("Here are your attributes:%nLife: %d%nHunger: %d%nThirst: %d%nEnergy: %d%nSanity: %d%n", jogador.getVida(), jogador.getFome(),
-                    jogador.getSede(), jogador.getEnergia(), jogador.getSanidade());
+            System.out.println("Here are your attributes: ");
+            jogador.showAttributes();
 
             ambiente = gerenciadorAmbientes.mudarAmbiente();
             ambiente.informacao();
 
-            System.out.printf("What do you wish to do?%n1 - Nothing%n2 - Explore%n3 - Check Inventory%nYour answer: ");
-            int answer2 = input.nextInt();
+            while (true) {
+                System.out.printf("What do you wish to do?%n" +
+                        "1 - Continue walking%n" +
+                        "2 - Explore%n" +
+                        "3 - Check Inventory%n" +
+                        "4 - Check Attributes%n" +
+                        "Your answer: ");
+                int answer2 = input.nextInt();
+                input.nextLine();
 
-            if (answer2 == 2) {
-                ambiente.explorar(jogador);
-            } else if (answer2 == 3) {
-                while (true) {
-                    System.out.printf("What do you wish to do?%n1 - See itens%n2 - Remove item%n3 - Cancel%nYour answer: ");
-                    int answer3 = input.nextInt();
+                if (answer2 == 1) {
+                    break;
+                } else if (answer2 == 2) {
+                    ambiente.explorar(jogador);
+                } else if (answer2 == 3) {
+                    while (true) {
+                        System.out.printf("What do you wish to do?%n" +
+                                "1 - See itens%n" +
+                                "2 - Inspect item%n" +
+                                "3 - Remove item%n" +
+                                "4 - Cancel%n" +
+                                "Your answer: ");
+                        int answer3 = input.nextInt();
 
-                    if (answer3 == 1) {
-                        jogador.mostrarInventario();
-                    } else {
-                        break;
+                        if (answer3 == 1) {
+                            jogador.mostrarInventario();
+                        } else if (answer3 == 2){
+                            jogador.inspecionarItem();
+                            break;
+                        }
                     }
+                } else {
+                    jogador.showAttributes();
                 }
             }
 

@@ -1,12 +1,17 @@
 package ambientes;
 
+import itens.materiais.*;
+
 public class AmbienteMontanha extends Ambiente{
     public AmbienteMontanha() {
         super("Montanhas",
                 "Um ambiente de difícil travessia",
                 75,
-                "seco",
-                new String[] {"Minério de ferro", "Ossos de exploradores", "Rocha rara"});
+                "seco");
+    }
+
+    public void adicionarRecursos() {
+        adicionarItem(new MinerioFerro());
     }
 
     public String getDescricao() {

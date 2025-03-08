@@ -25,12 +25,21 @@ public class Personagem {
         this.inventario.mostrarItens();
     }
 
+    public void inspecionarItem() {
+        this.inventario.inspecionarItem();
+    }
+
     public void addItemInventario(Item item) {
         this.inventario.adicionarItem(item);
     }
 
     public String getName() {
         return this.nome;
+    }
+
+    public void showAttributes() {
+        System.out.printf("- Vida: %d%n- Fome: %d%n- Sede: %d%n- Energia: %d%n- Sanidade: %d%n",
+                getVida(), getFome(), getSede(), getEnergia(), getSanidade());
     }
 
     public int getVida() {

@@ -11,9 +11,9 @@ public class Item {
         this.durabilidade = durabilidade;
     }
 
-    public void usar() {
+    public void usar() {}
 
-    }
+    public void getAttributes() {}
 
     public String getNome() {
         return this.nome;
