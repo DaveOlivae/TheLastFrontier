@@ -25,12 +25,20 @@ public class Personagem {
         this.inventario.mostrarItens();
     }
 
-    public void inspecionarItem() {
-        this.inventario.inspecionarItem();
+    public void inspecionarItem(int i) {
+        this.inventario.inspecionarItem(i);
     }
 
     public void addItemInventario(Item item) {
         this.inventario.adicionarItem(item);
+    }
+
+    public void remvItemInventario(int i) {
+        this.inventario.removerItem(i);
+    }
+
+    public boolean playerInvEmpty() {
+        return this.inventario.emptyInventory();
     }
 
     public String getName() {

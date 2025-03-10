@@ -21,17 +21,9 @@ public class Inventario {
 
     // esse metodo serve para que o usuario possa selecionar um item
     // as informacoes desse item serao imprimidas
-    public void inspecionarItem() {
-        Scanner input = new Scanner(System.in);
-
+    public void inspecionarItem(int i) {
         if (!itens.isEmpty()) {
-            mostrarItens();
-            System.out.print("Qual item deseja inspecionar? (digite o index) : ");
-
-            int resp = input.nextInt();
-            input.nextLine();
-
-            getAtributosItem(resp);
+            getAtributosItem(i);
         } else {
             System.out.println("Seu inventário está vazio!");
         }
@@ -41,12 +33,20 @@ public class Inventario {
         itens.get(i - 1).getAttributes();
     }
 
-    public void removerItem(String nomeItem) {
-
+    public void removerItem(int i) {
+        if (itens.isEmpty()) {
+            System.out.println("O seu inventário está vazio");
+        } else {
+            this.itens.remove(i);
+        }
     }
 
     public void usarItem(String nomeItem) {
 
+    }
+
+    public boolean emptyInventory() {
+        return itens.isEmpty();
     }
 
     public void mostrarItens() {

@@ -5,9 +5,11 @@ package ambientes;
 
 import itens.*;
 import personagens.*;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Random;
 
 public class Ambiente {
     // atributos
@@ -35,16 +37,23 @@ public class Ambiente {
     }
 
     private void encontrarItens(Personagem jogador, Scanner input) {
+        Random random = new Random();
+
+        Item itemEcontrado;
 
         if (!recursos.isEmpty()) {
-            System.out.printf("Você encontrou %s%n", recursos.getLast().getNome());
+
+            // o item encontrado vai ser um item escolhido aleatóriamente da lista de recursos (por agora)
+            itemEcontrado = recursos.get(random.nextInt(recursos.size()));
+
+            System.out.printf("Você encontrou %s%n", itemEcontrado.getNome());
 
             System.out.printf("Você deseja guardar esse item? s/n :");
             String ans = input.nextLine();
 
             if (ans.equals("s")) {
-                jogador.addItemInventario(recursos.getLast());
-                System.out.printf("%s foi adicionado ao seu inventário%n", recursos.getLast().getNome());
+                jogador.addItemInventario(itemEcontrado);
+                System.out.printf("%s foi adicionado ao seu inventário%n", itemEcontrado.getNome());
             }
 
             recursos.removeLast();

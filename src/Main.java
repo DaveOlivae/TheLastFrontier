@@ -54,20 +54,26 @@ public class Main {
             jogador = new SobreviventeNato(name);
         }
 
+        // mensagem de boa sorte e mostra os atributos iniciais do jogador
         System.out.printf("Good Luck %s!%n", jogador.getName());
+        System.out.println("Here are your attributes: ");
+        jogador.showAttributes();
 
         /* ------------- Main game loop ---------------- */
         int turnos = 1;
         while (true) {
 
             /* Fase de inicio */
-            System.out.println("Here are your attributes: ");
-            jogador.showAttributes();
 
+            // muda o ambiente e mostra informacoes sobre o ambiente
             ambiente = gerenciadorAmbientes.mudarAmbiente();
             ambiente.informacao();
 
             while (true) {
+
+                /* Fase de acao */
+
+                // gives the player options
                 System.out.printf("What do you wish to do?%n" +
                         "1 - Continue walking%n" +
                         "2 - Explore%n" +
@@ -78,10 +84,13 @@ public class Main {
                 input.nextLine();
 
                 if (answer2 == 1) {
+                    // player decides to do nothing
                     break;
                 } else if (answer2 == 2) {
+                    // player decides to explore
                     ambiente.explorar(jogador);
                 } else if (answer2 == 3) {
+                    // inventory options
                     while (true) {
                         System.out.printf("What do you wish to do?%n" +
                                 "1 - See itens%n" +
@@ -92,9 +101,39 @@ public class Main {
                         int answer3 = input.nextInt();
 
                         if (answer3 == 1) {
+                            // player just sees whats in the inventory
                             jogador.mostrarInventario();
-                        } else if (answer3 == 2){
-                            jogador.inspecionarItem();
+                        } else if (answer3 == 2) {
+                            // player sees whats in the inventory and chooses an item
+                            // the items attributes will be shown
+                            jogador.mostrarInventario();
+
+                            if (!jogador.playerInvEmpty()) {
+                                System.out.print("Qual item deseja inspecionar? (digite o index) : ");
+
+                                int answer4 = input.nextInt();
+                                input.nextLine();
+
+                                jogador.inspecionarItem(answer4);
+                            }
+
+                            break;
+                        } else if (answer3 == 3) {
+                            // player escolhe um item para remover do inventario
+                            jogador.mostrarInventario();
+                            if (!jogador.playerInvEmpty()) {
+                                System.out.print("Qual item deseja remover: (digite o index) : ");
+
+                                int answer4 = input.nextInt();
+                                input.nextLine();
+
+                                jogador.remvItemInventario(answer4 - 1);
+
+                                System.out.println("O item foi removido.");
+                            }
+
+                            break;
+                        } else if (answer3 == 4) {
                             break;
                         }
                     }
