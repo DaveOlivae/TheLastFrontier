@@ -21,6 +21,11 @@ public class Personagem {
         this.inventario = new Inventario(pesoTotal, espacoDisponivel);
     }
 
+    public void attFomeSede() {
+        this.fome += 3;
+        this.sede += 4;  // sede maior que a fome
+    }
+
     public void mostrarInventario() {
         this.inventario.mostrarItens();
     }
@@ -38,16 +43,24 @@ public class Personagem {
     }
 
     public boolean playerInvEmpty() {
-        return this.inventario.emptyInventory();
+        return !this.inventario.emptyInventory();
+    }
+
+    public void showAttributes() {
+        System.out.printf("- Vida: %d%n" +
+                        "- Fome: %d%n" +
+                        "- Sede: %d%n" +
+                        "- Energia: %d%n" +
+                        "- Sanidade: %d%n" +
+                        "- Peso Total: %d/%d%n" +
+                        "- Espaço Total: %d/%d%n",
+                getVida(), getFome(), getSede(), getEnergia(), getSanidade(),
+                inventario.getPeso(), inventario.getPesoTotal(),
+                inventario.getEspaco(), inventario.getPesoTotal());
     }
 
     public String getName() {
         return this.nome;
-    }
-
-    public void showAttributes() {
-        System.out.printf("- Vida: %d%n- Fome: %d%n- Sede: %d%n- Energia: %d%n- Sanidade: %d%n",
-                getVida(), getFome(), getSede(), getEnergia(), getSanidade());
     }
 
     public int getVida() {
@@ -68,5 +81,21 @@ public class Personagem {
 
     public int getSanidade() {
         return this.sanidade;
+    }
+
+    public int getInvPeso() {
+        return this.inventario.getPeso();
+    }
+
+    public int getInvEspaco() {
+        return this.inventario.getEspaco();
+    }
+
+    public int getInvPesoTot() {
+        return this.inventario.getPesoTotal();
+    }
+
+    public int getInvEspDisp() {
+        return this.inventario.getEspacoDisponivel();
     }
 }

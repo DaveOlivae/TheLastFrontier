@@ -69,9 +69,10 @@ public class Main {
             ambiente = gerenciadorAmbientes.mudarAmbiente();
             ambiente.informacao();
 
+            /* Fase de acao */
+
             while (true) {
 
-                /* Fase de acao */
 
                 // gives the player options
                 System.out.printf("What do you wish to do?%n" +
@@ -90,7 +91,7 @@ public class Main {
                     // player decides to explore
                     ambiente.explorar(jogador);
                 } else if (answer2 == 3) {
-                    // inventory options
+                    /* inventory options */
                     while (true) {
                         System.out.printf("What do you wish to do?%n" +
                                 "1 - See itens%n" +
@@ -108,7 +109,7 @@ public class Main {
                             // the items attributes will be shown
                             jogador.mostrarInventario();
 
-                            if (!jogador.playerInvEmpty()) {
+                            if (jogador.playerInvEmpty()) {
                                 System.out.print("Qual item deseja inspecionar? (digite o index) : ");
 
                                 int answer4 = input.nextInt();
@@ -121,7 +122,7 @@ public class Main {
                         } else if (answer3 == 3) {
                             // player escolhe um item para remover do inventario
                             jogador.mostrarInventario();
-                            if (!jogador.playerInvEmpty()) {
+                            if (jogador.playerInvEmpty()) {
                                 System.out.print("Qual item deseja remover: (digite o index) : ");
 
                                 int answer4 = input.nextInt();
@@ -142,7 +143,22 @@ public class Main {
                 }
             }
 
-            if (turnos == 2) {
+            /* fase de manutencao */
+            jogador.attFomeSede();
+            System.out.println("Você está ficando com fome e sede");
+
+            // resolvi colocar como fome max 80 e sede max 60, talvez mude dps
+            if (jogador.getFome() >= 80) {
+                System.out.println("Você morreu de fome. Fim de jogo");
+                break;
+            }
+
+            if (jogador.getSede() >= 60) {
+                System.out.println("Você morreu de sede. Fim de jogo");
+                break;
+            }
+
+            if (turnos == 30) {
                 System.out.println("The game has ended, thank you for playing!");
                 break;
             }

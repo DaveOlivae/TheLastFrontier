@@ -36,6 +36,7 @@ public class Ambiente {
         recursos.add(item);
     }
 
+    /* esse metodo eh responsavel por lidar com o encontrar itens e adiciona-los no inventario, se possivel */
     private void encontrarItens(Personagem jogador, Scanner input) {
         Random random = new Random();
 
@@ -48,15 +49,29 @@ public class Ambiente {
 
             System.out.printf("Você encontrou %s%n", itemEcontrado.getNome());
 
-            System.out.printf("Você deseja guardar esse item? s/n :");
-            String ans = input.nextLine();
+            int espaco = jogador.getInvEspaco();
+            int peso = jogador.getInvPeso();
+           
+            if (++espaco <= jogador.getInvEspDisp() && ++peso <= jogador.getInvPesoTot()) {
+                System.out.printf("Você deseja guardar esse item? s/n :");
+                String ans = input.nextLine();
 
-            if (ans.equals("s")) {
-                jogador.addItemInventario(itemEcontrado);
-                System.out.printf("%s foi adicionado ao seu inventário%n", itemEcontrado.getNome());
+                if (ans.equals("s")) {
+                    jogador.addItemInventario(itemEcontrado);
+                    System.out.printf("%s foi adicionado ao seu inventário%n", itemEcontrado.getNome());
+                }
+
+                recursos.removeLast();
+            } else {
+                if (++espaco > jogador.getInvEspaco()) {
+                    System.out.println("Você não tem mais espaço no inventário");
+                }
+
+                if (++peso > jogador.getInvPesoTot()) {
+                    System.out.println("Você já atingiu o limite máximo de peso que pode carregar");
+                }
             }
 
-            recursos.removeLast();
         } else {
             System.out.println("Não há mais recursos disponíveis.");
         }

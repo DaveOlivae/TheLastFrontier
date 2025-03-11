@@ -2,12 +2,13 @@ package itens;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class Inventario {
     private List<Item> itens;
     private int pesoTotal;
     private int espacoDisponivel;
+    private int peso;
+    private int espaco;
 
     public Inventario(int pesoTotal, int espacoDisponivel) {
         this.pesoTotal = pesoTotal;
@@ -17,6 +18,8 @@ public class Inventario {
 
     public void adicionarItem(Item item) {
         itens.add(item);
+        this.peso += item.getPeso();
+        this.espaco++;  // a ideia eh que cada item ocupa um espaço mas talvez alguns itens possam ocupar mais de um
     }
 
     // esse metodo serve para que o usuario possa selecionar um item
@@ -27,10 +30,6 @@ public class Inventario {
         } else {
             System.out.println("Seu inventário está vazio!");
         }
-    }
-
-    public void getAtributosItem(int i) {
-        itens.get(i - 1).getAttributes();
     }
 
     public void removerItem(int i) {
@@ -58,5 +57,25 @@ public class Inventario {
                 System.out.println(i + "- " + itens.get(i - 1).getNome());
             }
         }
+    }
+
+    public void getAtributosItem(int i) {
+        itens.get(i - 1).getAttributes();
+    }
+
+    public int getPesoTotal() {
+        return this.pesoTotal;
+    }
+
+    public int getEspacoDisponivel() {
+        return this.espacoDisponivel;
+    }
+
+    public int getPeso() {
+        return this.peso;
+    }
+
+    public int getEspaco() {
+        return this.espaco;
     }
 }

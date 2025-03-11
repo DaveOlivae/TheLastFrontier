@@ -16,29 +16,31 @@ public class GerenciadorDeAmbientes {
         new AmbienteMontanha(), new AmbienteLagoRio()};
     }
 
+    /* seleciona um novo ambiente e checa se ele n eh igual ao ultimo */
     public Ambiente mudarAmbiente() {
         Random random = new Random();
 
-        int numero = random.nextInt(5);
+        int numero;
 
         Ambiente novoAmbiente;
 
-        // seleciona um novo ambiente e checa se ele n eh igual ao ultimo
-        while(true) {
-            novoAmbiente = ambientesDisponiveis[numero];
+        // qnd o historico estiver vazio, o ultimo ambiente sera null, dps sera sempre o ultimo membro da lista
+        Ambiente ultimoAmbiente = historico.isEmpty() ? null : historico.getLast();
 
-            if(!historico.isEmpty()) {
-                if(!novoAmbiente.equals(historico.getLast())) {
-                    break;
-                }
-            } else {
-                break;
-            }
-        }
+        do {
+            numero = random.nextInt(5);
+            novoAmbiente = ambientesDisponiveis[numero];
+        } while (novoAmbiente.equals(ultimoAmbiente));
 
         this.climaGlobal = novoAmbiente.getClima();
 
         historico.add(novoAmbiente);
+
+        // limita o historico a apenas os ultimos dois ambientes visitados
+        // quando passa disso ele remove o primeiro elemento da lista
+        if (historico.size() > 2) {
+            historico.removeFirst();
+        }
 
         return novoAmbiente;
     }
