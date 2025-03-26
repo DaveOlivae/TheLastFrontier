@@ -7,8 +7,7 @@ public class AmbienteLagoRio extends Ambiente{
     public AmbienteLagoRio() {
         super("Lago e Rio",
                 "Uma planície em que um rio desagua num grande lago.",
-                25,
-                "úmido");
+                25);
     }
 
     public void adicionarRecursos() {
@@ -17,10 +16,6 @@ public class AmbienteLagoRio extends Ambiente{
 
     public String getDescricao() {
         return super.getDescricao();
-    }
-
-    public String getClima() {
-        return super.getClima();
     }
 
     public String getName() {

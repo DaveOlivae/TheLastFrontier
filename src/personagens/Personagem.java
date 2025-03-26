@@ -2,7 +2,7 @@ package personagens;
 
 import itens.*;
 
-public class Personagem {
+public abstract class Personagem {
     private String nome;
     private int vida;
     private int fome;
@@ -57,6 +57,18 @@ public class Personagem {
                 getVida(), getFome(), getSede(), getEnergia(), getSanidade(),
                 inventario.getPeso(), inventario.getPesoTotal(),
                 inventario.getEspaco(), inventario.getPesoTotal());
+    }
+
+    public void restaurarFome(int pontos) {
+        this.fome += pontos;
+    }
+
+    public void restaurarSede(int pontos) {
+        this.sede += pontos;
+    }
+
+    public void usarItem(int i, Personagem jogador) {
+        inventario.usarItem(i, jogador);
     }
 
     public String getName() {

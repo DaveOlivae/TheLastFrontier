@@ -11,29 +11,37 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Random;
 
-public class Ambiente {
+public abstract class Ambiente {
     // atributos
     private String nome;
     private String descricao;
     private int dificuldadeExploracao;
-    private String clima;
+    private List<String> climasPossiveis;  // aqui eu to fazendo um lista pra guardar todos os climas
+    private String climaAtual;  // esse eh o clima do turno
     private List<Item> recursos;
 
     // construtor
-    public Ambiente(String nome, String descricao, int dificuldadeExploracao, String clima) {
+    public Ambiente(String nome, String descricao, int dificuldadeExploracao) {
         this.nome = nome;
         this.descricao = descricao;
         this.dificuldadeExploracao = dificuldadeExploracao;
-        this.clima = clima;
+        this.climasPossiveis = new ArrayList<>();
         this.recursos = new ArrayList<>();
         adicionarRecursos();
+        atualizarClimas();
     }
 
     // metodos
     public void adicionarRecursos() {}
 
+    public void atualizarClimas() {}
+
     public void adicionarItem(Item item) {
         recursos.add(item);
+    }
+
+    public void adicionarClima(String clima) {
+        climasPossiveis.add(clima);
     }
 
     /* esse metodo eh responsavel por lidar com o encontrar itens e adiciona-los no inventario, se possivel */
@@ -103,15 +111,18 @@ public class Ambiente {
 
     public void gerarEvento() {}
 
-    public void modificarClima() {}
-
-    // gets
-    public String getName() {
-        return this.nome;
+    public void modificarClima() {
+        Random random = new Random();
+        this.climaAtual = climasPossiveis.get(random.nextInt(climasPossiveis.size() - 1));
     }
 
-    public String getClima() {
-        return this.clima;
+    // gets
+
+    public String getClimaAtual() {
+        return this.climaAtual;
+    }
+    public String getName() {
+        return this.nome;
     }
 
     public String getDescricao() {

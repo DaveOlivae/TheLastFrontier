@@ -1,5 +1,7 @@
 package itens;
 
+import personagens.Personagem;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,37 +27,29 @@ public class Inventario {
     // esse metodo serve para que o usuario possa selecionar um item
     // as informacoes desse item serao imprimidas
     public void inspecionarItem(int i) {
-        if (!itens.isEmpty()) {
-            getAtributosItem(i);
-        } else {
-            System.out.println("Seu inventário está vazio!");
-        }
+        getAtributosItem(i);
     }
 
     public void removerItem(int i) {
-        if (itens.isEmpty()) {
-            System.out.println("O seu inventário está vazio");
-        } else {
-            this.itens.remove(i);
-        }
+        this.itens.remove(i);
     }
 
-    public void usarItem(String nomeItem) {
-
+    // mudei a assinatura da funcao
+    public void usarItem(int i, Personagem jogador) {
+        this.itens.get(i).usar(jogador);
     }
 
     public boolean emptyInventory() {
+        if (itens.isEmpty()) {
+            System.out.println("Seu inventário está vazio");
+        }
         return itens.isEmpty();
     }
 
     public void mostrarItens() {
-        if (itens.isEmpty()) {
-            System.out.println("O seu inventário está vazio");
-        } else {
-            System.out.println("Inventário: ");
-            for (int i = 1; i <= itens.size(); i++) {
-                System.out.println(i + "- " + itens.get(i - 1).getNome());
-            }
+        System.out.println("Inventário: ");
+        for (int i = 1; i <= itens.size(); i++) {
+            System.out.println(i + "- " + itens.get(i - 1).getNome());
         }
     }
 

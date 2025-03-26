@@ -69,6 +69,8 @@ public class Main {
             ambiente = gerenciadorAmbientes.mudarAmbiente();
             ambiente.informacao();
 
+            ambiente.modificarClima();
+            System.out.printf("O clima está %s%n", ambiente.getClimaAtual());
             /* Fase de acao */
 
             while (true) {
@@ -93,23 +95,26 @@ public class Main {
                 } else if (answer2 == 3) {
                     /* inventory options */
                     while (true) {
-                        System.out.printf("What do you wish to do?%n" +
-                                "1 - See itens%n" +
-                                "2 - Inspect item%n" +
-                                "3 - Remove item%n" +
-                                "4 - Cancel%n" +
-                                "Your answer: ");
+                        System.out.printf("O que você deseja fazer?%n" +
+                                "1 - Ver itens%n" +
+                                "2 - Inspecionar itens%n" +
+                                "3 - Usar item%n" +
+                                "4 - Remover item%n" +
+                                "5 - Cancelar%n" +
+                                "Sua decisão: ");
                         int answer3 = input.nextInt();
 
                         if (answer3 == 1) {
                             // player just sees whats in the inventory
-                            jogador.mostrarInventario();
+                            if (!jogador.playerInvEmpty()) {
+                                jogador.mostrarInventario();
+                            }
                         } else if (answer3 == 2) {
                             // player sees whats in the inventory and chooses an item
                             // the items attributes will be shown
-                            jogador.mostrarInventario();
-
                             if (jogador.playerInvEmpty()) {
+                                jogador.mostrarInventario();
+
                                 System.out.print("Qual item deseja inspecionar? (digite o index) : ");
 
                                 int answer4 = input.nextInt();
@@ -118,11 +123,22 @@ public class Main {
                                 jogador.inspecionarItem(answer4);
                             }
 
-                            break;
                         } else if (answer3 == 3) {
-                            // player escolhe um item para remover do inventario
-                            jogador.mostrarInventario();
                             if (jogador.playerInvEmpty()) {
+                                jogador.mostrarInventario();
+
+                                System.out.print("Qual item você deseja usar? ");
+
+                                int answer4 = input.nextInt();
+                                input.nextLine();
+
+                                jogador.usarItem(answer4 - 1, jogador);
+                            }
+                        } else if (answer3 == 4) {
+                            // player escolhe um item para remover do inventario
+                            if (jogador.playerInvEmpty()) {
+                                jogador.mostrarInventario();
+
                                 System.out.print("Qual item deseja remover: (digite o index) : ");
 
                                 int answer4 = input.nextInt();
@@ -133,8 +149,7 @@ public class Main {
                                 System.out.println("O item foi removido.");
                             }
 
-                            break;
-                        } else if (answer3 == 4) {
+                        } else if (answer3 == 5) {
                             break;
                         }
                     }
@@ -142,6 +157,10 @@ public class Main {
                     jogador.showAttributes();
                 }
             }
+
+            /* fase de evento aleatorio */
+
+
 
             /* fase de manutencao */
             jogador.attFomeSede();

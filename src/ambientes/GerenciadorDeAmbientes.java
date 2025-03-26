@@ -32,8 +32,6 @@ public class GerenciadorDeAmbientes {
             novoAmbiente = ambientesDisponiveis[numero];
         } while (novoAmbiente.equals(ultimoAmbiente));
 
-        this.climaGlobal = novoAmbiente.getClima();
-
         historico.add(novoAmbiente);
 
         // limita o historico a apenas os ultimos dois ambientes visitados
@@ -43,6 +41,10 @@ public class GerenciadorDeAmbientes {
         }
 
         return novoAmbiente;
+    }
+
+    public void setClimaGlobal(Ambiente ambiente) {
+        this.climaGlobal = ambiente.getClimaAtual();
     }
 
     public String getClimaGlobal() {

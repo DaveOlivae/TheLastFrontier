@@ -6,8 +6,11 @@ public class AmbienteCaverna extends Ambiente{
     public AmbienteCaverna() {
         super("Caverna",
                 "Um ambiente subterrâneo e muito escuro.",
-                100,
-                "úmido");
+                100);
+    }
+
+    public void atualizarClimas() {
+        adicionarClima("Úmido");
     }
 
     public void adicionarRecursos() {
@@ -16,10 +19,6 @@ public class AmbienteCaverna extends Ambiente{
 
     public String getDescricao() {
         return super.getDescricao();
-    }
-
-    public String getClima() {
-        return super.getClima();
     }
 
     public String getName() {

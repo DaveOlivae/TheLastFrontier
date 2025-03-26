@@ -6,8 +6,7 @@ public class AmbienteMontanha extends Ambiente{
     public AmbienteMontanha() {
         super("Montanhas",
                 "Um ambiente de difícil travessia",
-                75,
-                "seco");
+                75);
     }
 
     public void adicionarRecursos() {
@@ -16,10 +15,6 @@ public class AmbienteMontanha extends Ambiente{
 
     public String getDescricao() {
         return super.getDescricao();
-    }
-
-    public String getClima() {
-        return super.getClima();
     }
 
     public String getName() {
