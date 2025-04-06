@@ -6,16 +6,18 @@ public abstract class Item {
     private String nome;
     private int peso;
     private int durabilidade;
+    private boolean equipavel;
 
-    public Item(String nome, int peso, int durabilidade) {
+    public Item(String nome, int peso, int durabilidade, boolean equipavel) {
         this.nome = nome;
         this.peso = peso;
         this.durabilidade = durabilidade;
+        this.equipavel = equipavel;
     }
 
-    public void usar(Personagem jogador) {}
+    public abstract void usar(Personagem jogador);
 
-    public void getAttributes() {}
+    public abstract void getAttributes();
 
     public String getNome() {
         return this.nome;
@@ -27,5 +29,9 @@ public abstract class Item {
 
     public int getDurabilidade() {
         return this.durabilidade;
+    }
+
+    public int getEficiencia() {
+        return 0;
     }
 }

@@ -1,6 +1,8 @@
-package eventos;
+package eventos.eventoClimatico;
 
-public class EventoClimatico extends Evento{
+import eventos.Evento;
+
+public abstract class EventoClimatico extends Evento {
     private String tipoDeClima;
     private int duracao;
     private String efeitoAmbiente;

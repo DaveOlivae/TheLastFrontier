@@ -2,6 +2,8 @@ package personagens;
 
 import itens.*;
 
+// TODO implementar energia
+
 public abstract class Personagem {
     private String nome;
     private int vida;
@@ -10,8 +12,13 @@ public abstract class Personagem {
     private int energia;
     private int sanidade;
     private Inventario inventario;
+    private Item itemEquipado;
+    private int exploracao;
+    private boolean protegido; // fiz esse atributo pra caso o jogador encontre abrigo não precisar passar por
+                                // evento aleatorio
 
-    public Personagem(String nome, int vida, int fome, int sede, int energia, int sanidade, int pesoTotal, int espacoDisponivel) {
+    public Personagem(String nome, int vida, int fome, int sede, int energia, int sanidade, int pesoTotal,
+                      int espacoDisponivel, int exploracao) {
         this.nome = nome;
         this.vida = vida;
         this.fome = fome;
@@ -19,11 +26,17 @@ public abstract class Personagem {
         this.energia = energia;
         this.sanidade = sanidade;
         this.inventario = new Inventario(pesoTotal, espacoDisponivel);
+        this.exploracao = exploracao;  // exploracao eh habilidade de explorar e vai de 1 a 10
+        this.protegido = false; // o jogador vai comecar nao estando protegido
     }
 
     public void attFomeSede() {
         this.fome += 3;
         this.sede += 4;  // sede maior que a fome
+    }
+
+    public void attEnergia(int pontos) {
+        this.energia -= pontos;
     }
 
     public void mostrarInventario() {
@@ -60,15 +73,37 @@ public abstract class Personagem {
     }
 
     public void restaurarFome(int pontos) {
-        this.fome += pontos;
+        this.fome -= pontos;
     }
 
     public void restaurarSede(int pontos) {
-        this.sede += pontos;
+        this.sede -= pontos;
     }
 
     public void usarItem(int i, Personagem jogador) {
         inventario.usarItem(i, jogador);
+    }
+
+    public void equiparItem(Item item) {
+        this.itemEquipado = item;
+    }
+
+    public void diminuirVida(int valor) {
+        this.vida -= valor;
+    }
+
+    public void estaProtegido() {
+        this.protegido = true;
+    }
+
+    // gets e sets
+
+    public int getExploracao() {
+        return this.exploracao;
+    }
+
+    public Item getItemEquipado() {
+        return this.itemEquipado;
     }
 
     public String getName() {

@@ -6,7 +6,7 @@ public class AmbienteFloresta extends Ambiente{
     public AmbienteFloresta() {
         super("Floresta",
                 "Um local de vegetação densa e fauna abundante",
-                50);
+                4);
     }
 
     public void atualizarClimas() {
@@ -15,6 +15,11 @@ public class AmbienteFloresta extends Ambiente{
 
     public void adicionarRecursos() {
         adicionarItem(new Fruta("Maçã"));
+    }
+
+    public int getDificuldadeExploracao() {
+        System.out.println("A densa quantidade de galhos e arbustos dificulta sua movimentação.");
+        return super.getDificuldadeExploracao();
     }
 
     public String getDescricao() {

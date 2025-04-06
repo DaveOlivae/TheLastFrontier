@@ -5,6 +5,8 @@ import personagens.Personagem;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO acho que da pra melhorar esse inventario, com quantidade de itens por exemplo
+
 public class Inventario {
     private List<Item> itens;
     private int pesoTotal;
@@ -37,6 +39,10 @@ public class Inventario {
     // mudei a assinatura da funcao
     public void usarItem(int i, Personagem jogador) {
         this.itens.get(i).usar(jogador);
+    }
+
+    public void equiparItemInv(int i, Personagem jogador) {
+        jogador.equiparItem(this.itens.get(i));
     }
 
     public boolean emptyInventory() {

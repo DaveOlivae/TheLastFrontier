@@ -3,22 +3,21 @@ package ambientes;
 // TODO : Implementar dificuldade de exploração
 // TODO : Implementar dificuldade de encontrar itens
 
+import eventos.Evento;
 import itens.*;
 import personagens.*;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.Random;
+import java.util.*;
 
 public abstract class Ambiente {
     // atributos
     private String nome;
     private String descricao;
-    private int dificuldadeExploracao;
+    private int dificuldadeExploracao;  // a dificuldade de exploracao vai de 1 a 10
     private List<String> climasPossiveis;  // aqui eu to fazendo um lista pra guardar todos os climas
     private String climaAtual;  // esse eh o clima do turno
     private List<Item> recursos;
+    private Map<Evento, Double> eventosPossiveis;
 
     // construtor
     public Ambiente(String nome, String descricao, int dificuldadeExploracao) {
@@ -27,14 +26,20 @@ public abstract class Ambiente {
         this.dificuldadeExploracao = dificuldadeExploracao;
         this.climasPossiveis = new ArrayList<>();
         this.recursos = new ArrayList<>();
+        this.eventosPossiveis = new HashMap<>();
+
         adicionarRecursos();
         atualizarClimas();
     }
 
     // metodos
-    public void adicionarRecursos() {}
+    public abstract void adicionarRecursos();
 
-    public void atualizarClimas() {}
+    public abstract void atualizarClimas();
+
+    public void adicionarEventos(Evento evento, double probabilidade) {
+        this.eventosPossiveis.put(evento, probabilidade);
+    }
 
     public void adicionarItem(Item item) {
         recursos.add(item);
@@ -45,7 +50,7 @@ public abstract class Ambiente {
     }
 
     /* esse metodo eh responsavel por lidar com o encontrar itens e adiciona-los no inventario, se possivel */
-    private void encontrarItens(Personagem jogador, Scanner input) {
+    public void encontrarItens(Personagem jogador, Scanner input) {
         Random random = new Random();
 
         Item itemEcontrado;
@@ -86,21 +91,44 @@ public abstract class Ambiente {
     }
 
     // essa eh a funcao que vai lidar com as acoes do jogador no ambiente
-    public void explorar(Personagem jogador) {
-        Scanner input = new Scanner(System.in);
+    public void explorar(Personagem jogador, Scanner input) {
+        Random random = new Random();
+        System.out.printf("Você adentra %s%n", getDescricao());
 
-        while(true) {
-            System.out.printf("Você adentra %s%n", getDescricao());
-            System.out.printf("1 - Procurar Itens%n2 - Ir embora%nSua resposta: ");
+        int teste = jogador.getExploracao() + random.nextInt(10);
+        int dificuldade = getDificuldadeExploracao(); // vai printar um ngc na tela
+
+        if (teste >= dificuldade) {
+            System.out.println("Você está adentrando o ambiente com sucesso");
+            System.out.println("O que você deseja fazer durante a exploração?");
+            System.out.printf("1 - Econtrar Itens%n" +
+                    "2 - Coletar Recursos%n" +
+                    "3 - Procurar Abrigo%n" +
+                    "Sua resposta: ");
 
             int resposta = input.nextInt();
             input.nextLine();
 
             if (resposta == 1) {
+                // TODO ajeitar esse encontro de itens
                 encontrarItens(jogador, input);
+            } else if (resposta == 2) {
+                // TODO implementar encontrar recursos
+                encontrarItens(jogador, input);
+            } else if (resposta == 3) {
+                // TODO implementar encontrar abrigo
+                // o jogador tem um atributo protegido, que eh um booleano, entao so mudar esse atributo
+                System.out.println("Não encontrou nenhum abrigo.");
             } else {
-                break;
+                System.out.printf("Resposta inválida.%n");
             }
+        } else if (teste >= dificuldade - 2) {
+            System.out.println("Você cai e se machuca, melhor nao continuar a explorar.");
+            System.out.println("Você perdeu 10 pontos de vida");
+            jogador.diminuirVida(10);
+        } else {
+            System.out.println("Você nao conseguiu explorar e perde 20 pontos de vida");
+            jogador.diminuirVida(20);
         }
     }
 
@@ -113,14 +141,19 @@ public abstract class Ambiente {
 
     public void modificarClima() {
         Random random = new Random();
-        this.climaAtual = climasPossiveis.get(random.nextInt(climasPossiveis.size() - 1));
+        this.climaAtual = climasPossiveis.get(random.nextInt(climasPossiveis.size()));
     }
 
     // gets
 
+    public int getDificuldadeExploracao() {
+        return this.dificuldadeExploracao;
+    }
+
     public String getClimaAtual() {
         return this.climaAtual;
     }
+
     public String getName() {
         return this.nome;
     }

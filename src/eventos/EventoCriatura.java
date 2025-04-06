@@ -1,5 +1,8 @@
 package eventos;
 
+import ambientes.Ambiente;
+import personagens.Personagem;
+
 public class EventoCriatura extends Evento{
     private String tipoDeCriatura;
     private int nivelPerigo;
@@ -11,5 +14,10 @@ public class EventoCriatura extends Evento{
         this.tipoDeCriatura = tipoDeCriatura;
         this.nivelPerigo = nivelPerigo;
         this.opcoesDeAcao = opcoesDeAcao;
+    }
+
+    @Override
+    public void executar(Personagem jogador, Ambiente local) {
+
     }
 }

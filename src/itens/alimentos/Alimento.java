@@ -1,6 +1,7 @@
 package itens.alimentos;
 
 import itens.Item;
+import personagens.Personagem;
 
 public class Alimento extends Item {
     private int valorNutricional;  // pontos de fome restaurados
@@ -8,10 +9,14 @@ public class Alimento extends Item {
     private int validade;  // dias ate estragar
 
     public Alimento(String nome, int peso, int durabilidade, int valorNutricional, String tipo, int validade) {
-        super(nome, peso, durabilidade);
+        super(nome, peso, durabilidade, false);
         this.tipo = tipo;
         this.valorNutricional = valorNutricional;
         this.validade = validade;
+    }
+
+    public void usar(Personagem jogador) {
+
     }
 
     public void getAttributes() {

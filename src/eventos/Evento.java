@@ -18,5 +18,5 @@ public abstract class Evento {
         this.condAtivacao = condAtivacao;
     }
 
-    public void executar(Personagem jogador, Ambiente local) {}
+    public abstract void executar(Personagem jogador, Ambiente local);
 }

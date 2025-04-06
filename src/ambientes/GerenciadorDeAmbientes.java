@@ -3,17 +3,22 @@ package ambientes;
 import java.util.Random;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class GerenciadorDeAmbientes {
-    private Ambiente[] ambientesDisponiveis;
+    private List<Supplier<Ambiente>> ambientesDisponiveis;
     private String climaGlobal;
     private List<Ambiente> historico;
 
     public GerenciadorDeAmbientes() {
-        historico = new ArrayList<>();
+        this.ambientesDisponiveis = new ArrayList<>();
+        this.historico = new ArrayList<>();
 
-        ambientesDisponiveis = new Ambiente[] {new AmbienteCaverna(), new AmbienteFloresta(), new AmbienteRuinas(),
-        new AmbienteMontanha(), new AmbienteLagoRio()};
+        ambientesDisponiveis.add(AmbienteFloresta::new);
+        ambientesDisponiveis.add(AmbienteCaverna::new);
+        ambientesDisponiveis.add(AmbienteLagoRio::new);
+        ambientesDisponiveis.add(AmbienteMontanha::new);
+        ambientesDisponiveis.add(AmbienteRuinas::new);
     }
 
     /* seleciona um novo ambiente e checa se ele n eh igual ao ultimo */
@@ -28,9 +33,9 @@ public class GerenciadorDeAmbientes {
         Ambiente ultimoAmbiente = historico.isEmpty() ? null : historico.getLast();
 
         do {
-            numero = random.nextInt(5);
-            novoAmbiente = ambientesDisponiveis[numero];
-        } while (novoAmbiente.equals(ultimoAmbiente));
+            numero = random.nextInt(ambientesDisponiveis.size());
+            novoAmbiente = ambientesDisponiveis.get(numero).get();
+        } while (ultimoAmbiente != null && novoAmbiente.getClass().equals(ultimoAmbiente.getClass()));
 
         historico.add(novoAmbiente);
 
