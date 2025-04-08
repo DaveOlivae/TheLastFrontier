@@ -1,6 +1,5 @@
 package jogo.ambientes;
 
-// TODO : Implementar dificuldade de exploração
 // TODO : Implementar dificuldade de encontrar jogo.itens
 
 import jogo.LidarComEventos;
@@ -92,7 +91,6 @@ public abstract class Ambiente implements LidarComEventos {
             input.nextLine();
 
             if (resposta == 1) {
-                // TODO ajeitar esse encontro de jogo.itens
                 encontrarItens(jogador, input);
             } else if (resposta == 2) {
                 // TODO implementar encontrar recursos

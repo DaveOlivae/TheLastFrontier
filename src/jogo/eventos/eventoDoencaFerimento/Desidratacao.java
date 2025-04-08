@@ -1,6 +1,7 @@
 package jogo.eventos.eventoDoencaFerimento;
 
 import jogo.ambientes.Ambiente;
+import jogo.eventos.AlvoDoEvento;
 import jogo.personagens.Personagem;
 
 public class Desidratacao extends EventoDoencaFerimento{
@@ -17,7 +18,8 @@ public class Desidratacao extends EventoDoencaFerimento{
 
     }
 
-    public void ativar() {
-        super.ativar();
+    @Override
+    public AlvoDoEvento getAlvoDoEvento() {
+        return AlvoDoEvento.JOGADOR;
     }
 }

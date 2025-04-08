@@ -1,6 +1,7 @@
 package jogo.eventos.eventoDoencaFerimento;
 
 import jogo.ambientes.Ambiente;
+import jogo.eventos.AlvoDoEvento;
 import jogo.personagens.Personagem;
 
 public class Hipotermia extends EventoDoencaFerimento{
@@ -18,8 +19,8 @@ public class Hipotermia extends EventoDoencaFerimento{
 
     }
 
-    // nao sei se isso ta correto, posso trocar dps
-    public void ativar() {
-        super.ativar();
+    @Override
+    public AlvoDoEvento getAlvoDoEvento() {
+        return AlvoDoEvento.JOGADOR;
     }
 }

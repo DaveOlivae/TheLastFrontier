@@ -69,16 +69,23 @@ public class Main {
         System.out.println("===== Seus atributos =====");
         jogador.showAttributes();
 
-        /* ------------- jogo.Main game loop ---------------- */
+        /* ------------- Main game loop ---------------- */
 
         int turnos = 1;
+
+        boolean caminhar = false;  // essa flag serve pra mudar o ambiente quando o jogador escolhe andar
+
+        ambiente = gerenciadorAmbientes.mudarAmbiente();  // inicia o ambiente
+
         while (true) {
 
             /* Fase de inicio */
 
             // muda o ambiente e mostra informacoes sobre o ambiente
 
-            ambiente = gerenciadorAmbientes.mudarAmbiente();
+            if (caminhar) {
+                ambiente = gerenciadorAmbientes.mudarAmbiente();
+            }
 
             ambiente.informacao();
 
@@ -101,12 +108,14 @@ public class Main {
                 input.nextLine();
 
                 if (answer2 == 1) {
+                    caminhar = true;
                     break;
                 } else if (answer2 == 2) {
                     // ======================= EXPLORACAO ==========================
                     // TODO consertar exploracao
                     // TODO trocar essa descricao
                     ambiente.explorar(jogador, input);
+                    caminhar = false;
                     break;
                 } else if (answer2 == 3) {
                     /* ========== OPCOES DO INVENTARIO ============*/
@@ -176,7 +185,8 @@ public class Main {
             }
             /* fase de evento aleatorio */
 
-            gerenciadorDeEventos.atualizarListaDeEventos(ambiente, jogador);
+            gerenciadorDeEventos.atualizarListaDeEventos(ambiente, jogador, caminhar);
+            gerenciadorDeEventos.sortearEvento(ambiente, jogador);
 
             /* fase de manutencao */
             jogador.attFomeSede();
@@ -194,7 +204,7 @@ public class Main {
             }
 
             if (turnos == 30) {
-                System.out.println("The game has ended, thank you for playing!");
+                System.out.println("O jogo acabou. Obrigado por jogar!");
                 break;
             }
 

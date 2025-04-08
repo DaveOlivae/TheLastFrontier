@@ -6,7 +6,6 @@ import jogo.personagens.Personagem;
 public abstract class Evento {
     private String nome;
     private String descricao;
-    private boolean condAtivacao;
 
     public Evento(String nome, String descricao) {
         this.nome = nome;
@@ -15,7 +14,9 @@ public abstract class Evento {
 
     public abstract void executar(Personagem jogador, Ambiente local);
 
-    public void ativar() {
-        this.condAtivacao = true;
+    public abstract AlvoDoEvento getAlvoDoEvento();
+
+    public String getNome() {
+        return this.nome;
     }
 }
