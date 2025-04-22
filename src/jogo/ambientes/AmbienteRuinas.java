@@ -1,5 +1,6 @@
 package jogo.ambientes;
 
+import jogo.itens.materiais.Carvao;
 import jogo.itens.materiais.MinerioFerro;
 
 public class AmbienteRuinas extends Ambiente{
@@ -18,7 +19,7 @@ public class AmbienteRuinas extends Ambiente{
     }
 
     public void adicionarRecursos() {
-        adicionarItem();
+        adicionarItem(new Carvao());
     }
 
     public int getDificuldadeExploracao() {
