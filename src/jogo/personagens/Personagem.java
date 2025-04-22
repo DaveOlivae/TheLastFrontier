@@ -96,7 +96,13 @@ public abstract class Personagem implements LidarComEventos {
     }
 
     public void attEnergia(int pontos) {
-        this.energia -= pontos;
+        if ((this.energia -= pontos) <= 0) {
+            this.energia = 0;
+        }
+    }
+
+    public void attVida(int pontos) {
+
     }
 
     public void restaurarFome(int pontos) {

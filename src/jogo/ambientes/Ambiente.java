@@ -1,6 +1,6 @@
 package jogo.ambientes;
 
-// TODO : Implementar dificuldade de encontrar jogo.itens
+// TODO : Implementar dificuldade de encontrar itens
 
 import jogo.LidarComEventos;
 import jogo.eventos.Evento;
@@ -15,7 +15,8 @@ public abstract class Ambiente implements LidarComEventos {
     private int dificuldadeExploracao;  // a dificuldade de exploracao vai de 1 a 10
     private List<String> climasPossiveis;  // aqui eu to fazendo um lista pra guardar todos os climas
     private String climaAtual;  // esse eh o clima do turno
-    private List<Item> recursos;
+    private HashMap<Item, Integer> itens;
+    private HashMap<Item, Integer> recursos;
     private List<Evento> eventosAtivos;
 
     public Ambiente(String nome, String descricao, int dificuldadeExploracao) {
@@ -23,21 +24,28 @@ public abstract class Ambiente implements LidarComEventos {
         this.descricao = descricao;
         this.dificuldadeExploracao = dificuldadeExploracao;
         this.climasPossiveis = new ArrayList<>();
-        this.recursos = new ArrayList<>();
+        this.recursos = new HashMap<>();
+        this.itens = new HashMap<>();
         this.eventosAtivos = new ArrayList<>();
 
+        adicionarItens();
         adicionarRecursos();
         atualizarClimas();
     }
 
     /* criacao e manutencao do ambiente */
+    public abstract void adicionarItens();
 
     public abstract void adicionarRecursos();
 
     public abstract void atualizarClimas();
 
-    public void adicionarItem(Item item) {
-        this.recursos.add(item);
+    public void adicionarRecurso(Item recurso, Integer dificuldadeEncontro) {
+        this.itens.put(recurso, dificuldadeEncontro);
+    }
+
+    public void adicionarItem(Item item, Integer dificuldadeEncontro) {
+        this.itens.put(item, dificuldadeEncontro);
     }
 
     public void adicionarClima(String clima) {
@@ -75,6 +83,10 @@ public abstract class Ambiente implements LidarComEventos {
     public void explorar(Personagem jogador, Scanner input) {
         Random random = new Random();
         System.out.printf("Você adentra %s%n", getDescricao());
+        System.out.println("O percurso é cansativo, você perde 30 de energia.");
+
+        // diminui a energia
+        jogador.attEnergia(30);
 
         int teste = jogador.getExploracao() + random.nextInt(10);
         int dificuldade = getDificuldadeExploracao(); // vai printar um ngc na tela
@@ -154,8 +166,8 @@ public abstract class Ambiente implements LidarComEventos {
     }
 
     public void informacao() {
-        System.out.printf("Você chegou num ambiente de %s.%n", this.nome);
-        System.out.printf("%s%n", this.descricao);
+        System.out.printf("==> Você chegou num ambiente de %s.%n", this.nome);
+        System.out.printf("\t'%s'%n", this.descricao);
     }
 
     // gets

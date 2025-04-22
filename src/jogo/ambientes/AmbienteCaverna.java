@@ -1,9 +1,14 @@
 package jogo.ambientes;
 
+import jogo.itens.alimentos.Agua;
+import jogo.itens.armas.Explosivo;
+import jogo.itens.armas.Revolver;
 import jogo.itens.ferramentas.Ferramenta;
 import jogo.itens.ferramentas.Lanterna;
+import jogo.itens.ferramentas.Picareta;
 import jogo.itens.ferramentas.Tocha;
-import jogo.itens.materiais.MinerioFerro;
+import jogo.itens.materiais.*;
+import jogo.itens.remedios.Curativo;
 import jogo.personagens.Personagem;
 
 public class AmbienteCaverna extends Ambiente{
@@ -19,7 +24,20 @@ public class AmbienteCaverna extends Ambiente{
     }
 
     public void adicionarRecursos() {
-        adicionarItem(new MinerioFerro());
+        adicionarRecurso(new MinerioFerro(), 6);
+        adicionarRecurso(new MinerioCobre(), 4);
+        adicionarRecurso(new Carvao(), 2);
+        adicionarRecurso(new Ouro(), 13);
+        adicionarRecurso(new Diamante(), 17);
+    }
+
+    public void adicionarItens() {
+        adicionarItem(new Agua(1, 80, 1), 5);
+        adicionarItem(new Picareta(), 10);
+        adicionarItem(new Explosivo("TNT", 3, 1, "Dinamite", 15, 20), 15);
+        adicionarItem(new Lanterna(), 13);
+        adicionarItem(new Curativo(), 7);
+        adicionarItem(new Revolver(), 20);
     }
 
     public String getDescricao() {

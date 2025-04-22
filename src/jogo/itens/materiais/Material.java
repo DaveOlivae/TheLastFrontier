@@ -3,7 +3,7 @@ package jogo.itens.materiais;
 import jogo.itens.Item;
 import jogo.personagens.Personagem;
 
-public class Material extends Item {
+public abstract class Material extends Item {
     private String tipo;
     private int resistencia;
 
@@ -19,7 +19,9 @@ public class Material extends Item {
     }
 
     public void getAttributes() {
-        System.out.printf("- Nome: %s%n- Tipo: %s%n- Peso: %s%n", getNome(), getTipo(), getPeso());
+        super.getAttributes();
+        System.out.printf("\tTipo: %s%n", this.tipo);
+        System.out.printf("\tResistencia: %d%n", this.resistencia);
     }
 
     public String getTipo() {

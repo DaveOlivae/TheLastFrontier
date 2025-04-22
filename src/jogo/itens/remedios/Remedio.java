@@ -3,7 +3,7 @@ package jogo.itens.remedios;
 import jogo.itens.Item;
 import jogo.personagens.Personagem;
 
-public class Remedio extends Item {
+public abstract class Remedio extends Item {
     private String tipo;
     private String efeito;
 
@@ -13,13 +13,17 @@ public class Remedio extends Item {
         this.efeito = efeito;
     }
 
-    @Override
-    public void usar(Personagem jogador) {
-
+    public void getAttributes() {
+        super.getAttributes();
+        System.out.printf("\tTipo: %s%n", this.getTipo());
+        System.out.printf("\tEfeito: %s%n", this.getEfeito());
     }
 
-    @Override
-    public void getAttributes() {
+    public String getTipo() {
+        return this.tipo;
+    }
 
+    public String getEfeito() {
+        return this.efeito;
     }
 }

@@ -3,7 +3,7 @@ package jogo.itens.armas;
 import jogo.itens.Item;
 import jogo.personagens.Personagem;
 
-public class Arma extends Item {
+public abstract class Arma extends Item {
     private String tipo;
     private int dano;
     private int alcance;
@@ -15,13 +15,22 @@ public class Arma extends Item {
         this.alcance = alcance;
     }
 
-    @Override
-    public void usar(Personagem jogador) {
-
+    public void getAttributes() {
+        super.getAttributes();
+        System.out.printf("\tTipo: %s%n", this.tipo);
+        System.out.printf("\tDano: %d%n", this.dano);
+        System.out.printf("\tAlcance: %d%n", this.alcance);
     }
 
-    @Override
-    public void getAttributes() {
+    public int getDano() {
+        return this.dano;
+    }
 
+    public int getAlcance() {
+        return this.alcance;
+    }
+
+    public String getTipo() {
+        return this.tipo;
     }
 }

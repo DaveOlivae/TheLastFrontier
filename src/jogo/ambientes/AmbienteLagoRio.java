@@ -1,6 +1,7 @@
 package jogo.ambientes;
 
 import jogo.itens.alimentos.*;
+import jogo.itens.materiais.Pedra;
 
 public class AmbienteLagoRio extends Ambiente{
 
@@ -16,8 +17,13 @@ public class AmbienteLagoRio extends Ambiente{
         adicionarClima("Chuva");
     }
 
+    public void adicionarItens() {
+        adicionarItem(new Agua(1, 70, 1), 1);
+        adicionarItem(new Peixe(), 2);
+    }
+
     public void adicionarRecursos() {
-        adicionarItem(new Agua(1, 70, 1));
+        adicionarRecurso(new Pedra(), 1);
     }
 
     public int getDificuldadeExploracao() {

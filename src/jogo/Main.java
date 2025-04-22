@@ -27,10 +27,10 @@ public class Main {
 
         // === Pergunta a classe ===
         System.out.printf("Selecione uma classe:%n" +
-                "1 - Rastreador%n" +
-                "2 - Mecânico%n" +
-                "3 - Médico%n" +
-                "4 - Sobrevivente Nato%n" +
+                "\t1 - Rastreador%n" +
+                "\t2 - Mecânico%n" +
+                "\t3 - Médico%n" +
+                "\t4 - Sobrevivente Nato%n" +
                 "Sua resposta: ");
 
 
@@ -99,15 +99,18 @@ public class Main {
 
             while (true) {
                 System.out.printf("O que você deseja fazer?%n" +
-                        "1 - Continuar a caminhar%n" +
-                        "2 - Explorar%n" +
-                        "3 - Checar o inventário%n" +
-                        "4 - Checar atributos%n" +
+                        "\t1 - Continuar a caminhar ( - 10 de energia )%n" +
+                        "\t2 - Explorar ( - 30 de energia )%n" +
+                        "\t3 - Checar o inventário%n" +
+                        "\t4 - Checar atributos%n" +
                         "Sua resposta: ");
                 int answer2 = input.nextInt();
                 input.nextLine();
 
                 if (answer2 == 1) {
+                    System.out.println("!== O percurso é logo e você se cansa moderadamente. " +
+                            "Perdeu 10 pontos de energia.");
+                    jogador.attEnergia(10);
                     caminhar = true;
                     break;
                 } else if (answer2 == 2) {
@@ -191,6 +194,11 @@ public class Main {
             /* fase de manutencao */
             jogador.attFomeSede();
             System.out.println("Você está ficando com fome e sede");
+
+            if (jogador.getEnergia() == 0) {
+                System.out.println("Sua energia chegou a zero e você morreu de exaustão. Fim de jogo");
+                break;
+            }
 
             // resolvi colocar como fome max 80 e sede max 60, talvez mude dps
             if (jogador.getFome() >= 80) {

@@ -17,7 +17,17 @@ public abstract class Item {
 
     public abstract void usar(Personagem jogador);
 
-    public abstract void getAttributes();
+    public void getAttributes() {
+        System.out.printf("\tNome: %s%n", getNome());
+        System.out.printf("\tPeso: %d%n", getPeso());
+        System.out.printf("\tDurabilidade: %d%n", getDurabilidade());
+
+        if (this.equipavel) {
+            System.out.println("\tEquipável?: Sim");
+        } else {
+            System.out.println("\tEquipável?: Não");
+        }
+    }
 
     public String getNome() {
         return this.nome;
