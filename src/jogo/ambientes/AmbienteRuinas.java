@@ -13,8 +13,12 @@ public class AmbienteRuinas extends Ambiente{
         adicionarClima("Úmido");
     }
 
+    public void adicionarItens() {
+
+    }
+
     public void adicionarRecursos() {
-        adicionarItem(new MinerioFerro());
+        adicionarItem();
     }
 
     public int getDificuldadeExploracao() {
