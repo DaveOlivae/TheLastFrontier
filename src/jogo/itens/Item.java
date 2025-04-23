@@ -29,6 +29,10 @@ public abstract class Item {
         }
     }
 
+    public boolean isEquipavel() {
+        return this.equipavel;
+    }
+
     public String getNome() {
         return this.nome;
     }

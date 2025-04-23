@@ -27,7 +27,7 @@ public class GerenciadorDeEventos {
 
     public void atualizarListaDeEventos(Ambiente ambiente, Personagem jogador, boolean caminhar) {
         /*
-        * esse metodo serve pra atualizar os jogo.eventos possiveis em cada turno
+        * esse metodo serve pra atualizar os eventos possiveis em cada turno
         *
         * eu usei a flag caminhar pra poder definir quais eventos nao podem acontecer e quais podem
         * a ideia eh que se o jogador decidir ir embora do ambiente, quando ele esta indo embora, so

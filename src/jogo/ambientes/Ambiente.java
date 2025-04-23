@@ -1,7 +1,5 @@
 package jogo.ambientes;
 
-// TODO : Implementar dificuldade de encontrar itens
-
 import jogo.LidarComEventos;
 import jogo.eventos.Evento;
 import jogo.itens.*;
@@ -41,7 +39,7 @@ public abstract class Ambiente implements LidarComEventos {
     public abstract void atualizarClimas();
 
     public void adicionarRecurso(Item recurso, Integer dificuldadeEncontro) {
-        this.itens.put(recurso, dificuldadeEncontro);
+        this.recursos.put(recurso, dificuldadeEncontro);
     }
 
     public void adicionarItem(Item item, Integer dificuldadeEncontro) {
@@ -94,9 +92,9 @@ public abstract class Ambiente implements LidarComEventos {
         if (teste >= dificuldade) {
             System.out.println("Você está adentrando o ambiente com sucesso");
             System.out.println("O que você deseja fazer durante a exploração?");
-            System.out.printf("1 - Econtrar Itens%n" +
-                    "2 - Coletar Recursos%n" +
-                    "3 - Procurar Abrigo%n" +
+            System.out.printf("\t1 - Encontrar Itens%n" +
+                    "\t2 - Coletar Recursos%n" +
+                    "\t3 - Procurar Abrigo%n" +
                     "Sua resposta: ");
 
             int resposta = input.nextInt();
@@ -124,44 +122,51 @@ public abstract class Ambiente implements LidarComEventos {
         }
     }
 
-    // esse metodo eh responsavel por lidar com o encontrar jogo.itens e adiciona-los no inventario, se possivel
+    // esse metodo eh responsavel por lidar com o encontro de itens e adiciona-los no inventario, se possivel
     public void encontrarItens(Personagem jogador, Scanner input) {
+        // da pra melhorar algumas coisas por aqui, mas vou manter assim so por teste
         Random random = new Random();
 
-        Item itemEcontrado;
+        int rastreamento = jogador.getRastreamento();
 
-        if (!recursos.isEmpty()) {
+        // a eq pra a jogada de dado, o rastreamento + um numero aleatorio, cujo bound eh a qtd que sobra ate 20
+        int diceRoll = rastreamento + (random.nextInt(20 - rastreamento) + 1);
 
-            // o item encontrado vai ser um item escolhido aleatóriamente da lista de recursos (por agora)
-            itemEcontrado = recursos.get(random.nextInt(recursos.size()));
+        List<Item> itensEncontrados = new ArrayList<>();
 
-            System.out.printf("Você encontrou %s%n", itemEcontrado.getNome());
+        for (Map.Entry<Item, Integer> entrada : this.itens.entrySet()) {
+            if (diceRoll >= entrada.getValue()) {
+                itensEncontrados.add(entrada.getKey());
+            }
+        }
 
-            int espaco = jogador.getInvEspaco();
-            int peso = jogador.getInvPeso();
-           
-            if (++espaco <= jogador.getInvEspDisp() && ++peso <= jogador.getInvPesoTot()) {
-                System.out.printf("Você deseja guardar esse item? s/n :");
-                String ans = input.nextLine();
+        System.out.println("Você encontrou: ");
+        for (int i = 0; i < itensEncontrados.size(); i++) {
+            System.out.printf("\t%d - %s%n", i, itensEncontrados.get(i).getNome());
+        }
 
-                if (ans.equals("s")) {
-                    jogador.addItemInventario(itemEcontrado);
-                    System.out.printf("%s foi adicionado ao seu inventário%n", itemEcontrado.getNome());
-                }
+        System.out.print("> Quais itens você deseja manter? (separar por vírgulas sem espaço, all = mantém todos): ");
+        String resposta = input.nextLine().trim();
 
-                recursos.removeLast();
-            } else {
-                if (++espaco > jogador.getInvEspaco()) {
-                    System.out.println("Você não tem mais espaço no inventário");
-                }
+        if (resposta.equals("all")) {
+            for (Item item : itensEncontrados) {
+                jogador.addItemInventario(item);
+                this.itens.remove(item);
+            }
+        } else {
+            String[] partes = resposta.split(",");
 
-                if (++peso > jogador.getInvPesoTot()) {
-                    System.out.println("Você já atingiu o limite máximo de peso que pode carregar");
-                }
+            List<Integer> ints = new ArrayList<>();
+
+            for (String parte : partes) {
+                ints.add(Integer.parseInt(parte));
             }
 
-        } else {
-            System.out.println("Não há mais recursos disponíveis.");
+            for (Integer index : ints) {
+                Item item = itensEncontrados.get(index);
+                jogador.addItemInventario(item);
+                this.itens.remove(item);
+            }
         }
     }
 

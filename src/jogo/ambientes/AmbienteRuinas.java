@@ -1,7 +1,9 @@
 package jogo.ambientes;
 
+import jogo.itens.alimentos.Agua;
 import jogo.itens.materiais.Carvao;
-import jogo.itens.materiais.MinerioFerro;
+import jogo.itens.materiais.Madeira;
+import jogo.itens.remedios.Curativo;
 
 public class AmbienteRuinas extends Ambiente{
     public AmbienteRuinas() {
@@ -14,12 +16,15 @@ public class AmbienteRuinas extends Ambiente{
         adicionarClima("Úmido");
     }
 
-    public void adicionarItens() {
+    // TODO implementar os itens encontrados nas ruinas
 
+    public void adicionarItens() {
+        adicionarItem(new Agua(1, 90, 1), 5);
+        adicionarItem(new Curativo(), 15);
     }
 
     public void adicionarRecursos() {
-        adicionarItem(new Carvao());
+        adicionarItem(new Madeira(), 1);
     }
 
     public int getDificuldadeExploracao() {

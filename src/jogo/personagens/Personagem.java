@@ -6,6 +6,7 @@ import jogo.itens.*;
 import jogo.LidarComEventos;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 // TODO implementar energia
 
@@ -16,15 +17,16 @@ public abstract class Personagem implements LidarComEventos {
     private int sede;
     private int energia;
     private int sanidade;
+    private int exploracao;
+    private int rastreamento;
     private Inventario inventario;
     private Item itemEquipado;
-    private int exploracao;
     private List<Evento> eventosAtivos;  // essa lista vai guardar os jogo.eventos ativos relacionados ao personagem
     private boolean protegido; // fiz esse atributo pra caso o jogador encontre abrigo não precisar passar por
                                 // evento aleatorio
 
     public Personagem(String nome, int vida, int fome, int sede, int energia, int sanidade, int pesoTotal,
-                      int espacoDisponivel, int exploracao) {
+                      int espacoDisponivel, int exploracao, int rastreamento) {
         this.nome = nome;
         this.vida = vida;
         this.fome = fome;
@@ -32,7 +34,8 @@ public abstract class Personagem implements LidarComEventos {
         this.energia = energia;
         this.sanidade = sanidade;
         this.inventario = new Inventario(pesoTotal, espacoDisponivel);
-        this.exploracao = exploracao;  // exploracao eh habilidade de explorar e vai de 1 a 10
+        this.exploracao = exploracao;  // exploracao eh habilidade de explorar e vai de 1 a 20
+        this.rastreamento = rastreamento; // tbm vai de 1 a 20
         this.protegido = false; // o jogador vai comecar nao estando protegido
         this.eventosAtivos = new ArrayList<>();
     }
@@ -58,14 +61,18 @@ public abstract class Personagem implements LidarComEventos {
     public void removerEvento(Class<? extends Evento> tipo) {
     }
 
-    /* metodos relacionados aos jogo.itens e inventario */
+    /* metodos relacionados aos itens e inventario */
+
+    public void acessarInventario(Scanner input) {
+        this.inventario.acessarInventario(input, this);
+    }
 
     public void mostrarInventario() {
         this.inventario.mostrarItens();
     }
 
     public boolean playerInvEmpty() {
-        return !this.inventario.emptyInventory();
+        return this.inventario.emptyInventory();
     }
 
     public void addItemInventario(Item item) {
@@ -166,6 +173,10 @@ public abstract class Personagem implements LidarComEventos {
 
     public int getSanidade() {
         return this.sanidade;
+    }
+
+    public int getRastreamento() {
+        return this.rastreamento;
     }
 
     public int getInvPeso() {

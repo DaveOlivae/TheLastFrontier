@@ -121,66 +121,7 @@ public class Main {
                     caminhar = false;
                     break;
                 } else if (answer2 == 3) {
-                    /* ========== OPCOES DO INVENTARIO ============*/
-                    while (true) {
-                        System.out.printf("O que você deseja fazer?%n" +
-                                "1 - Ver jogo.itens%n" +
-                                "2 - Inspecionar jogo.itens%n" +
-                                "3 - Usar item%n" +
-                                "4 - Remover item%n" +
-                                "5 - Cancelar%n" +
-                                "Sua decisão: ");
-                        int answer3 = input.nextInt();
-
-                        if (answer3 == 1) {
-                            // player just sees whats in the inventory
-                            if (!jogador.playerInvEmpty()) {
-                                jogador.mostrarInventario();
-                            }
-                        } else if (answer3 == 2) {
-                            // player sees whats in the inventory and chooses an item
-                            // the items attributes will be shown
-                            if (jogador.playerInvEmpty()) {
-                                jogador.mostrarInventario();
-
-                                System.out.print("Qual item deseja inspecionar? (digite o index) : ");
-
-                                int answer4 = input.nextInt();
-                                input.nextLine();
-
-                                jogador.inspecionarItem(answer4);
-                            }
-
-                        } else if (answer3 == 3) {
-                            if (jogador.playerInvEmpty()) {
-                                jogador.mostrarInventario();
-
-                                System.out.print("Qual item você deseja usar? ");
-
-                                int answer4 = input.nextInt();
-                                input.nextLine();
-
-                                jogador.usarItem(answer4 - 1, jogador);
-                            }
-                        } else if (answer3 == 4) {
-                            // player escolhe um item para remover do inventario
-                            if (jogador.playerInvEmpty()) {
-                                jogador.mostrarInventario();
-
-                                System.out.print("Qual item deseja remover: (digite o index) : ");
-
-                                int answer4 = input.nextInt();
-                                input.nextLine();
-
-                                jogador.remvItemInventario(answer4 - 1);
-
-                                System.out.println("O item foi removido.");
-                            }
-
-                        } else if (answer3 == 5) {
-                            break;
-                        }
-                    }
+                    jogador.acessarInventario(input);
                 } else if (answer2 == 4) {
                     // =============== MOSTRA ATRIBUTOS =================
                     jogador.showAttributes();

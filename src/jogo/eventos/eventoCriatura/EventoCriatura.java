@@ -14,4 +14,8 @@ public abstract class EventoCriatura extends Evento {
         this.nivelPerigo = nivelPerigo;
         this.opcoesDeAcao = opcoesDeAcao;
     }
+
+    public String[] getOpcoesDeAcao() {
+        return this.opcoesDeAcao;
+    }
 }
