@@ -20,7 +20,7 @@ public class Agua extends Item {
     }
 
     public void getAttributes() {
-        System.out.printf("- Nome: %s%n- Peso: %s%n- Pureza: %s%n", getNome(), getPeso(), getPureza());
+        System.out.printf("- Nome: %s%n- Peso: %s%n- Pureza: %s%n", getName(), getPeso(), getPureza());
     }
 
     public int getPureza() {

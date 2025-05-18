@@ -27,7 +27,7 @@ public class AmbienteCaverna extends Ambiente{
         System.out.println("==========Dificuldade de exploracao: " + getDificuldadeExploracao(jogador));
         if (itemEquipado instanceof Tocha || itemEquipado instanceof Lanterna) {
             setDificuldadeExploracao(7);
-            System.out.printf("Sua %s ilumina o ambiente%n", itemEquipado.getNome());
+            System.out.printf("Sua %s ilumina o ambiente%n", itemEquipado.getName());
         }
 
         super.explorar(jogador, input);
@@ -68,7 +68,7 @@ public class AmbienteCaverna extends Ambiente{
         if (jogador.getItemEquipado() instanceof Tocha || jogador.getItemEquipado() instanceof Lanterna) {
             Ferramenta ferramenta = (Ferramenta) jogador.getItemEquipado();  // downcasting pra acessar o metodo geteficiencia
 
-            System.out.printf("Sua %s ilumina a caverna%n", ferramenta.getNome());
+            System.out.printf("Sua %s ilumina a caverna%n", ferramenta.getName());
             return super.getDificuldadeExploracao() + ferramenta.getEficiencia();
         } else {
             return super.getDificuldadeExploracao();

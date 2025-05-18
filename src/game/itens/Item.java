@@ -1,28 +1,46 @@
 package game.itens;
 
 import game.entity.Player;
+import game.graphics.GamePanel;
 
-public abstract class Item {
-    private String nome;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+
+public class Item {
+
+    public BufferedImage image;
+    public String name;
+    public boolean collision = false;
+    public int worldX, worldY;
+
     private int peso;
     private int durabilidade;
     private boolean equipavel;
 
-    public Item(String nome, int peso, int durabilidade, boolean equipavel) {
-        this.nome = nome;
+    public Item(String name, int peso, int durabilidade, boolean equipavel) {
+        this.name = name;
         this.peso = peso;
         this.durabilidade = durabilidade;
         this.equipavel = equipavel;
     }
 
-    public abstract void usar(Player jogador);
+    public void draw(Graphics2D g2, GamePanel gp) {
+        int screenX = worldX - gp.player.envX + gp.player.screenX;
+        int screenY = worldY - gp.player.envY + gp.player.screenY;
+
+        g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+    }
+
+    public void usar(Player jogador) {
+        // i have to see what i'm gonna do about this
+    }
 
     public void diminuirDurabilidade(int pontos) {
         this.durabilidade -= pontos;
     }
 
     public void getAttributes() {
-        System.out.printf("\tNome: %s%n", getNome());
+        System.out.printf("\tNome: %s%n", getName());
         System.out.printf("\tPeso: %d%n", getPeso());
         System.out.printf("\tDurabilidade: %d%n", getDurabilidade());
 
@@ -37,8 +55,8 @@ public abstract class Item {
         return this.equipavel;
     }
 
-    public String getNome() {
-        return this.nome;
+    public String getName() {
+        return this.name;
     }
 
     public int getPeso() {

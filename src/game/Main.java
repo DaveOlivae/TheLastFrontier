@@ -20,6 +20,7 @@ public class Main {
         window.setLocationRelativeTo(null);  // window appears at the center
         window.setVisible(true);
 
+        gamePanel.setupGame();
         gamePanel.startGameThread();
 
 //        Scanner input = new Scanner(System.in);

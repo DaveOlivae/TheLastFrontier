@@ -86,7 +86,7 @@ public class Inventario {
                     Item item = this.itens.get(i);
 
                     if (item.isEquipavel()) {
-                        System.out.printf("\t%d - %s%n", i, item.getNome());
+                        System.out.printf("\t%d - %s%n", i, item.getName());
                     }
                 }
 
@@ -95,7 +95,7 @@ public class Inventario {
                 input.nextLine();
 
                 equiparItemInv(answer4, jogador);
-                System.out.printf("%s foi equipado%n", this.itens.get(answer4).getNome());
+                System.out.printf("%s foi equipado%n", this.itens.get(answer4).getName());
 
             } else if (answer3 == 6) {
                 break;
@@ -145,11 +145,11 @@ public class Inventario {
     public void mostrarItens(Player jogador) {
         System.out.println("Inventário: ");
         for (int i = 1; i <= itens.size(); i++) {
-            System.out.println("\t" + i + "- " + itens.get(i - 1).getNome());
+            System.out.println("\t" + i + "- " + itens.get(i - 1).getName());
         }
 
         try {
-            System.out.printf("\t>> Item Equipado: %s%n", jogador.getItemEquipado().getNome());
+            System.out.printf("\t>> Item Equipado: %s%n", jogador.getItemEquipado().getName());
         } catch (NullPointerException e) {
             System.out.println("\t>> Item Equipado: nenhum");
         }

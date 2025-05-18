@@ -17,14 +17,14 @@ public abstract class Alimento extends Item {
 
     public void usar(Player jogador) {
         jogador.restaurarFome(this.valorNutricional);
-        System.out.println("Você comeu " + getNome());
+        System.out.println("Você comeu " + getName());
     }
 
     public void getAttributes() {
         System.out.printf("- Nome: %s%n" +
                 "- Tipo: %s%n" +
                 "- Peso: %d%n" +
-                "- Valor Nutricional: %d%n", super.getNome(), getTipo(), super.getPeso(), getValorNutricional());
+                "- Valor Nutricional: %d%n", super.getName(), getTipo(), super.getPeso(), getValorNutricional());
     }
 
     public String getTipo() {

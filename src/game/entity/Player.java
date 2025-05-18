@@ -30,6 +30,9 @@ public abstract class Player extends Entity implements LidarComEventos {
     private boolean protegido; // fiz esse atributo pra caso o jogador encontre abrigo não precisar passar por
                                 // evento aleatorio
 
+    public final int screenX;
+    public final int screenY;
+
     GamePanel gp;
     KeyHandler keyH;
 
@@ -47,6 +50,18 @@ public abstract class Player extends Entity implements LidarComEventos {
         this.protegido = false; // o jogador vai comecar nao estando protegido
         this.eventosAtivos = new ArrayList<>();
 
+        this.solidArea = new Rectangle();
+
+        // config for the player collision rectangle
+
+        solidArea.x = 8;
+        solidArea.y = 16;
+        solidArea.width = 48;
+        solidArea.height = 48;
+
+        this.screenX = gp.screenWidth/2 - (gp.tileSize/2);
+        this.screenY = gp.screenHeight/2 - (gp.tileSize/2);
+
         this.gp = gp;
         this.keyH = keyH;
 
@@ -59,70 +74,86 @@ public abstract class Player extends Entity implements LidarComEventos {
 
     public void setDefaultValues() {
 
-        x = 100;
-        y = 100;
+        envX = 100;  // player starting position
+        envY = 100;
         speed = 4;
-        direction = "down";
+        direction = "down";  // player starts facing down
     }
 
     public void getPlayerImage() {
-        SpriteSheet spriteSheetUp = new SpriteSheet("/sprites/player/up.png");
+        // this method loads/crops the sprites of the player
 
-        for (int i = 0; i < 12; i++) {
-            up[i] = spriteSheetUp.getFrame(i * 24, 0, 24, 24);
+        SpriteSheet spriteSheet = new SpriteSheet("/sprites/player/01-generic.png");
+
+        for (int i = 0; i < 3; i++) {
+            up[i] = spriteSheet.getFrame(i * 16, 48, 16, 16);
         }
 
-        SpriteSheet spriteSheetDown = new SpriteSheet("/sprites/player/down.png");
-
-        for (int i = 0; i < 12; i++) {
-            down[i] = spriteSheetDown.getFrame(i * 24, 0, 24, 24);
+        for (int i = 0; i < 3; i++) {
+            down[i] = spriteSheet.getFrame(i * 16, 0, 16, 16);
         }
 
-        SpriteSheet spriteSheetRight = new SpriteSheet("/sprites/player/right.png");
-
-        for (int i = 0; i < 12; i++) {
-            right[i] = spriteSheetRight.getFrame(i * 24, 0, 24, 24);
+        for (int i = 0; i < 3; i++) {
+            right[i] = spriteSheet.getFrame(i * 16, 32, 16, 16);
         }
 
-        SpriteSheet spriteSheetLeft = new SpriteSheet("/sprites/player/left.png");
-
-        for (int i = 0; i < 12; i++) {
-            left[i] = spriteSheetLeft.getFrame(i * 24, 0, 24, 24);
+        for (int i = 0; i < 3; i++) {
+            left[i] = spriteSheet.getFrame(i * 16, 16, 16, 16);
         }
     }
 
     public void update() {
-        // the way that this is implemented you can move diagonally, im not sure if im gonna keep this
 
+        // when there are no keys being pressed the standard sprite is the one in the index 1
         if (keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed) {
 
             if (this.keyH.upPressed) {
-                y -= speed;
                 direction = "up";
             } else if (this.keyH.downPressed) {
-                y += speed;
                 direction = "down";
-            }
-
-            if (keyH.rightPressed) {
-                x += speed;
+            } else if (keyH.rightPressed) {
                 direction = "right";
-            } else if (keyH.leftPressed) {
-                x -= speed;
+            } else {
                 direction = "left";
             }
 
+            /* ------------ check tile collision -------------- */
+            collisionOn = false;
+            gp.cChecker.checkTile(this);
+
+            // if collision is false, player can move
+            if (!collisionOn) {
+                switch (direction) {
+                    case "up":
+                        envY -= speed;
+                        break;
+                    case "down":
+                        envY += speed;
+                        break;
+                    case "right":
+                        envX += speed;
+                        break;
+                    case "left":
+                        envX -= speed;
+                        break;
+                }
+            }
+
+            /* --------- sprite changer ----------- */
+
+            // every time the sprite counter is over 5, the sprite num will changes by one, the sprite num is the index
+            // for the sprites array
             ++spriteCounter;
-            if (spriteCounter > 3) {
+            if (spriteCounter > 5) {
                 ++spriteNum;
                 spriteCounter = 0;
             }
 
-            if (spriteNum > 11) {
+            if (spriteNum > 2) {
                 spriteNum = 0;
             }
         } else {
-            spriteNum = 0;
+            spriteNum = 1;
         }
 
     }
@@ -144,6 +175,28 @@ public abstract class Player extends Entity implements LidarComEventos {
             case "left":
                 image = left[spriteNum];
                 break;
+        }
+
+        int x = screenX;
+        int y = screenY;
+
+        if (screenX > envX) {
+            x = envX;
+        }
+        if (screenY > envY) {
+            y = envY;
+        }
+
+        int rightOffset = gp.screenWidth - screenX;
+
+        if (rightOffset > gp.envWidth - envX) {
+            x = gp.screenWidth - (gp.envWidth - envX);
+        }
+
+        int bottomOffset = gp.screenHeight - screenY;
+
+        if (bottomOffset > gp.envHeight - envY) {
+            y = gp.screenHeight - (gp.envHeight - envY);
         }
 
         g2.drawImage(image, x, y, gp.tileSize, gp.tileSize, null);
@@ -240,19 +293,6 @@ public abstract class Player extends Entity implements LidarComEventos {
 
     public void diminuirVida(int valor) {
         this.vida -= valor;
-    }
-
-    public void showAttributes() {
-        System.out.printf("- Vida: %d%n" +
-                        "- Fome: %d%n" +
-                        "- Sede: %d%n" +
-                        "- Energia: %d%n" +
-                        "- Sanidade: %d%n" +
-                        "- Peso Total: %d/%d%n" +
-                        "- Espaço Total: %d/%d%n",
-                getVida(), getFome(), getSede(), getEnergia(), getSanidade(),
-                inventario.getPeso(), inventario.getPesoTotal(),
-                inventario.getEspaco(), inventario.getPesoTotal());
     }
 
     public void estaProtegido() {

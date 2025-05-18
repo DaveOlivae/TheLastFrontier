@@ -139,7 +139,7 @@ public abstract class Ambiente implements LidarComEventos {
 
         System.out.println("Você encontrou: ");
         for (int i = 0; i < itensEncontrados.size(); i++) {
-            System.out.printf("\t%d - %s%n", i, itensEncontrados.get(i).getNome());
+            System.out.printf("\t%d - %s%n", i, itensEncontrados.get(i).getName());
         }
 
         System.out.print("> Quais itens você deseja manter? (separar por vírgulas sem espaço, all = mantém todos): ");
