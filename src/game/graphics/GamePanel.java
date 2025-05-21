@@ -1,13 +1,15 @@
 package game.graphics;
 
 import game.CollisionChecker;
-import game.ambientes.EnvironmentManager;
+import game.Sound;
+import game.ambientes.Ambiente;
+import game.ambientes.GerenciadorDeAmbiente;
 import game.entity.Player;
 import game.entity.Rastreador;
 import game.input.KeyHandler;
 import game.itens.Item;
-import game.itens.ItemManager;
 
+import java.util.List;
 import javax.swing.*;
 import java.awt.*;
 
@@ -28,25 +30,24 @@ public class GamePanel extends JPanel implements Runnable{
     public final int envWidth = tileSize * maxEnvCol;
     public final int envHeight = tileSize * maxEnvRow;
 
+    // game state
+    public int gameState;
+    public final int playState = 1;
+    public final int pauseState = 2;
+
     int FPS = 60;
 
-    // instantiating
-
-    EnvironmentManager envM = new EnvironmentManager();
-
+    // system
+    GerenciadorDeAmbiente envM = new GerenciadorDeAmbiente();
     public TileManager tileM = new TileManager(this);
-
-    KeyHandler keyH = new KeyHandler();
-
+    KeyHandler keyH = new KeyHandler(this);
+    Sound music = new Sound();
     Thread gameThread;
+    public CollisionChecker cChecker = new CollisionChecker(this, envM);
+    UI ui = new UI(this);
 
-    public CollisionChecker cChecker = new CollisionChecker(this);
-
-    public ItemManager itemM = new ItemManager(this);
-
+    // entities and items
     public Player player = new Rastreador("none", this, keyH);
-
-    public Item[] obj = new Item[10];
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -57,8 +58,10 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void setupGame() {
-        // this method is used to set the objects in the map
-        itemM.setObject();
+        // this method is used to set sound and game state
+        playMusic(0);
+
+        gameState = playState;
     }
 
     public void startGameThread() {
@@ -90,7 +93,20 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void update() {
-        player.update();
+        if (gameState == playState) {
+            player.update();
+        }
+    }
+
+    private void drawObjects(Graphics2D g2) {
+        Ambiente ambienteAtual = envM.getAmbienteAtual();
+
+        for (Item item : ambienteAtual.getItens()) {
+            if (item != null) {
+                item.draw(g2, this);
+            }
+        }
+
     }
 
     public void paintComponent(Graphics g) {
@@ -99,19 +115,38 @@ public class GamePanel extends JPanel implements Runnable{
 
         Graphics2D g2 = (Graphics2D)g;
 
-        tileM.draw(g2);
-
-        for (int i = 0; i < obj.length; i++) {
-            if (obj[i] != null) {
-                obj[i].draw(g2, this);
-            }
-
-        }
-
-        player.draw(g2);
-
         envM.update(player, this, tileM);
 
+        // TILE
+        tileM.draw(g2);
+
+        drawObjects(g2);
+
+        // PLAYER
+        player.draw(g2);
+
+        // UI
+        ui.draw(g2);
+
         g2.dispose();
+    }
+
+    public void playMusic(int i) {
+        music.setFile(i);
+        music.play();
+        music.loop();
+    }
+
+    public void stopMusic() {
+        music.stop();
+    }
+
+    public void playSE(int i) {
+        music.setFile(i);
+        music.play();
+    }
+
+    public List<Item> getItens() {
+        return envM.getAmbienteAtual().getItens();
     }
 }

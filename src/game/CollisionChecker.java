@@ -1,13 +1,20 @@
 package game;
 
+import game.ambientes.Ambiente;
+import game.ambientes.GerenciadorDeAmbiente;
 import game.entity.Entity;
 import game.graphics.GamePanel;
+import game.itens.Item;
+
+import java.util.List;
 
 public class CollisionChecker {
 
-    GamePanel gp;
+    private GamePanel gp;
+    private GerenciadorDeAmbiente envM;
 
-    public CollisionChecker(GamePanel gp) {
+    public CollisionChecker(GamePanel gp, GerenciadorDeAmbiente envM) {
+        this.envM = envM;
         this.gp = gp;
     }
 
@@ -63,5 +70,81 @@ public class CollisionChecker {
                 }
                 break;
         }
+    }
+
+    public int checkObject(Entity entity, boolean player) {
+        int index = 999;
+
+        List<Item> itens = gp.getItens();
+
+        for (int i = 0; i < itens.size(); i++) {
+            Item item = itens.get(i);
+
+            if (itens.get(i) != null) {
+                // get entity's solid area position
+                    // we take the value of the rectangle x, y and add the environment x, y to get the value on the env
+                entity.solidArea.x = entity.envX + entity.solidArea.x;
+                entity.solidArea.y = entity.envY + entity.solidArea.y;
+
+                // get the object's solid area position
+                item.solidArea.x = item.envX + item.solidArea.x;
+                item.solidArea.y = item.envY + item.solidArea.y;
+
+                switch (entity.direction) {
+                    case "up":
+                        entity.solidArea.y -= entity.speed;
+                        if (entity.solidArea.intersects(item.solidArea)) {
+                            if (item.collision) {
+                                entity.collisionOn = true;
+                            }
+                            if (player) {
+                                index = i;
+                            }
+                        }
+                        break;
+                    case "down":
+                        entity.solidArea.y += entity.speed;
+                        if (entity.solidArea.intersects(item.solidArea)) {
+                            if (item.collision) {
+                                entity.collisionOn = true;
+                            }
+                            if (player) {
+                                index = i;
+                            }
+                        }
+                        break;
+                    case "left":
+                        entity.solidArea.x -= entity.speed;
+                        if (entity.solidArea.intersects(item.solidArea)) {
+                            if (item.collision) {
+                                entity.collisionOn = true;
+                            }
+                            if (player) {
+                                index = i;
+                            }
+                        }
+                        break;
+                    case "right":
+                        entity.solidArea.x += entity.speed;
+                        if (entity.solidArea.intersects(item.solidArea)) {
+                            if (item.collision) {
+                                entity.collisionOn = true;
+                            }
+                            if (player) {
+                                index = i;
+                            }
+                        }
+                        break;
+                }
+
+                entity.solidArea.x = entity.solidAreaDefaultX;
+                entity.solidArea.y = entity.solidAreaDefaultY;
+                item.solidArea.x = item.solidAreaDefaultX;
+                item.solidArea.y = item.solidAreaDefaultY;
+            }
+
+        }
+
+        return index;
     }
 }

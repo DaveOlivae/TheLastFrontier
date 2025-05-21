@@ -6,12 +6,15 @@ import game.graphics.GamePanel;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class Item {
+public abstract class Item {
 
-    public BufferedImage image;
+    private BufferedImage image;
     public String name;
     public boolean collision = false;
-    public int worldX, worldY;
+    public int envX, envY;
+    // these values for the rectangle are set because so the rectangle will be exaclty 1 tile
+    public Rectangle solidArea = new Rectangle(0, 0, 64, 64);
+    public int solidAreaDefaultX, solidAreaDefaultY;
 
     private int peso;
     private int durabilidade;
@@ -25,15 +28,45 @@ public class Item {
     }
 
     public void draw(Graphics2D g2, GamePanel gp) {
-        int screenX = worldX - gp.player.envX + gp.player.screenX;
-        int screenY = worldY - gp.player.envY + gp.player.screenY;
+        // this method is similar to the draw method of the tile manager
+        // it has to deal with the absolute and relative positions of the object, and take care of them when the player
+        // is at the borders of the environment
 
-        g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+        int screenX = envX - gp.player.envX + gp.player.screenX;
+        int screenY = envY - gp.player.envY + gp.player.screenY;
+
+        if (gp.player.screenX > gp.player.envX) {
+            screenX = envX;
+        }
+        if (gp.player.screenY > gp.player.envY) {
+            screenY = envY;
+        }
+        int rightOffset = gp.screenWidth - gp.player.screenX;
+        if (rightOffset > gp.envWidth - gp.player.envX) {
+            screenX = gp.screenWidth - (gp.envWidth - envX);
+        }
+        int bottomOffset = gp.screenHeight - gp.player.screenY;
+        if (bottomOffset > gp.envHeight - gp.player.envY) {
+            screenY = gp.screenHeight - (gp.envHeight - envY);
+        }
+
+        if (envX + gp.tileSize > gp.player.envX - gp.player.screenX &&
+                envX - gp.tileSize < gp.player.envX + gp.player.screenX &&
+                envY + gp.tileSize > gp.player.envY - gp.player.screenY &&
+                envY - gp.tileSize < gp.player.envY + gp.player.screenY) {
+
+            g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+        } else if (gp.player.screenX > gp.player.envX ||
+                gp.player.screenY > gp.player.envY ||
+                rightOffset > gp.envWidth - gp.player.envX ||
+                bottomOffset > gp.envHeight - gp.player.envY) {
+
+            // this condition deals with the rendering of tiles when the player is in the border area
+            g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
+        }
     }
 
-    public void usar(Player jogador) {
-        // i have to see what i'm gonna do about this
-    }
+    public abstract void usar(Player jogador);
 
     public void diminuirDurabilidade(int pontos) {
         this.durabilidade -= pontos;
@@ -53,6 +86,10 @@ public class Item {
 
     public boolean isEquipavel() {
         return this.equipavel;
+    }
+
+    public void setImage(BufferedImage image) {
+        this.image = image;
     }
 
     public String getName() {

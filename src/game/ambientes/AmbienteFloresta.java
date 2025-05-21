@@ -1,14 +1,22 @@
 package game.ambientes;
 
+import game.graphics.Tile;
+import game.graphics.TileManager;
 import game.itens.alimentos.*;
 import game.itens.materiais.Madeira;
 import game.itens.materiais.Pedra;
 
-public class AmbienteFloresta extends Ambiente{
-    public AmbienteFloresta() {
+public class AmbienteFloresta extends Ambiente {
+
+    public AmbienteFloresta(TileManager tileM) {
         super("Floresta",
                 "Um local de vegetação densa e fauna abundante",
-                5);
+                5, tileM);
+        adicionarItens();
+    }
+
+    public void carregarAmbiente(String path) {
+        super.carregarAmbiente(path);
     }
 
     public void atualizarClimas() {
@@ -16,8 +24,7 @@ public class AmbienteFloresta extends Ambiente{
     }
 
     public void adicionarItens() {
-        adicionarItem(new Fruta("Maçã"), 3);
-        adicionarItem(new Agua(1, 80, 1), 7);
+        adicionarItem(new Fruta("Maçã"), (19 * 64), (20 * 64));
     }
 
     public void adicionarRecursos() {

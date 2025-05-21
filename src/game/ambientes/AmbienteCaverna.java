@@ -1,5 +1,6 @@
 package game.ambientes;
 
+import game.graphics.TileManager;
 import game.itens.Item;
 import game.itens.alimentos.Agua;
 import game.itens.armas.Explosivo;
@@ -14,23 +15,16 @@ import game.entity.Player;
 
 import java.util.Scanner;
 
-public class AmbienteCaverna extends Ambiente{
-    public AmbienteCaverna() {
+public class AmbienteCaverna extends Ambiente {
+
+    public AmbienteCaverna(TileManager tileM) {
         super("Caverna",
                 "Um ambiente subterrâneo e muito escuro.",
-                18);
+                18, tileM);
     }
 
-    public void explorar(Player jogador, Scanner input) {
-        Item itemEquipado = jogador.getItemEquipado();
-
-        System.out.println("==========Dificuldade de exploracao: " + getDificuldadeExploracao(jogador));
-        if (itemEquipado instanceof Tocha || itemEquipado instanceof Lanterna) {
-            setDificuldadeExploracao(7);
-            System.out.printf("Sua %s ilumina o ambiente%n", itemEquipado.getName());
-        }
-
-        super.explorar(jogador, input);
+    public void carregarAmbiente(String path) {
+        super.carregarAmbiente(path);
     }
 
     public void atualizarClimas() {
@@ -47,12 +41,7 @@ public class AmbienteCaverna extends Ambiente{
     }
 
     public void adicionarItens() {
-        adicionarItem(new Agua(1, 80, 1), 5);
-        adicionarItem(new Picareta(), 10);
-        adicionarItem(new Explosivo("TNT", 3, 1, "Dinamite", 15, 20), 15);
-        adicionarItem(new Lanterna(), 13);
-        adicionarItem(new Curativo(), 7);
-        adicionarItem(new Revolver(), 20);
+
     }
 
     public String getDescricao() {

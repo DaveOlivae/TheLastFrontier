@@ -1,6 +1,7 @@
 package game.graphics;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -8,7 +9,7 @@ import java.util.ArrayList;
 
 public class TileManager {
 
-    GamePanel gp;
+    private GamePanel gp;
     public ArrayList<Tile> tile;
     public int[][] mapTileNum;
 
@@ -19,25 +20,15 @@ public class TileManager {
         mapTileNum = new int[gp.maxEnvCol][gp.maxEnvRow];
 
         getTileImage();
-//        loadMap("/maps/map01.txt");
     }
 
     public void getTileImage() {
-        loadTileSet("/environment/tileset.png");
-
-//        SpriteSheet floor = new SpriteSheet("/environment/floor.png");
-//        SpriteSheet water = new SpriteSheet("/environment/water.png");
-
-        // grass
-//        this.tile[0] = new Tile();
-//        this.tile[0].image = floor.getFrame(16, 160, 16, 16);
-
-        // water
-//        this.tile[1] = new Tile();
-//        this.tile[1].image = water.getFrame(0, 0, 16, 16);
+        // this method call the loadtileset method, passing the file path
+        loadTileSet("/environment/tileset1.png");
     }
 
     private void loadTileSet(String path) {
+        // this method loads the tile set
         SpriteSheet tileset = new SpriteSheet(path);
 
         int height = tileset.getHeight();
@@ -48,32 +39,23 @@ public class TileManager {
         for (int y = 0; y < height; y += tileSize) {
             for (int x = 0; x < width; x += tileSize) {
                 this.tile.add(new Tile());
+
                 this.tile.getLast().image = tileset.getFrame(x, y, tileSize, tileSize);
+                BufferedImage scaledImage = new BufferedImage(gp.tileSize, gp.tileSize, tile.getLast().image.getType());
+                Graphics2D g2 = scaledImage.createGraphics();
+                g2.drawImage(tile.getLast().image, 0, 0, gp.tileSize, gp.tileSize, null);
+
+
             }
         }
 
         // setar a colisão de respectivos tiles
 
-        this.tile.get(2).collision = true;  // colisao do tile que eh uma parede
-        this.tile.get(3).collision = true;  // colisao do tile que eh uma parede
-        this.tile.get(4).collision = true;  // colisao do tile que eh uma parede
-        this.tile.get(16).collision = true;  // colisao do tile que eh uma parede
-        this.tile.get(17).collision = true;  // colisao do tile que eh uma parede
-        this.tile.get(18).collision = true;  // colisao do tile que eh uma parede
-        this.tile.get(36).collision = true;  // colisao do tile que eh uma parede
-        this.tile.get(38).collision = true;  // colisao do tile que eh uma parede
-        this.tile.get(55).collision = true;  // colisao do tile que eh uma parede
-        this.tile.get(59).collision = true;  // colisao do tile que eh uma parede
-        this.tile.get(62).collision = true;  // colisao do tile que eh uma parede
-        this.tile.get(64).collision = true;  // colisao do tile que eh uma parede
-        this.tile.get(65).collision = true;  // colisao do tile que eh uma parede
-        this.tile.get(64).collision = true;  // colisao do tile que eh uma parede
-        this.tile.get(75).collision = true;  // colisao do tile que eh uma parede
-        this.tile.get(76).collision = true;  // colisao do tile que eh uma parede
     }
 
 
     public void loadMap(String filePath) {
+        // this method loads the environment maps
 
         try {
             InputStream is = getClass().getResourceAsStream(filePath);

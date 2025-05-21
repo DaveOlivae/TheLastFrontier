@@ -1,14 +1,20 @@
 package game.ambientes;
 
+import game.graphics.Tile;
+import game.graphics.TileManager;
 import game.itens.alimentos.*;
 import game.itens.materiais.Pedra;
 
-public class AmbienteLagoRio extends Ambiente{
+public class AmbienteLagoRio extends Ambiente {
 
-    public AmbienteLagoRio() {
+    public AmbienteLagoRio(TileManager tileM) {
         super("Lago e Rio",
                 "Uma planície em que um rio desagua num grande lago.",
-                6);
+                6, tileM);
+    }
+
+    public void carregarAmbiente(String path) {
+        super.carregarAmbiente(path);
     }
 
     public void atualizarClimas() {
@@ -18,8 +24,7 @@ public class AmbienteLagoRio extends Ambiente{
     }
 
     public void adicionarItens() {
-        adicionarItem(new Agua(1, 70, 1), 1);
-        adicionarItem(new Peixe(), 2);
+
     }
 
     public void adicionarRecursos() {

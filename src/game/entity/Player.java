@@ -1,5 +1,7 @@
 package game.entity;
 
+import game.ambientes.Ambiente;
+import game.ambientes.GerenciadorDeAmbiente;
 import game.eventos.Evento;
 import game.graphics.GamePanel;
 import game.graphics.SpriteSheet;
@@ -33,11 +35,11 @@ public abstract class Player extends Entity implements LidarComEventos {
     public final int screenX;
     public final int screenY;
 
-    GamePanel gp;
-    KeyHandler keyH;
+    private KeyHandler keyH;
 
     public Player(String nome, int vida, int fome, int sede, int energia, int sanidade, int pesoTotal,
                   int espacoDisponivel, int exploracao, int rastreamento, GamePanel gp, KeyHandler keyH) {
+        super(gp);
         this.nome = nome;
         this.vida = vida;
         this.fome = fome;
@@ -50,19 +52,19 @@ public abstract class Player extends Entity implements LidarComEventos {
         this.protegido = false; // o jogador vai comecar nao estando protegido
         this.eventosAtivos = new ArrayList<>();
 
-        this.solidArea = new Rectangle();
-
         // config for the player collision rectangle
 
+        this.solidArea = new Rectangle();
         solidArea.x = 8;
         solidArea.y = 16;
+        solidAreaDefaultX = solidArea.x;
+        solidAreaDefaultY = solidArea.y;
         solidArea.width = 48;
         solidArea.height = 48;
 
         this.screenX = gp.screenWidth/2 - (gp.tileSize/2);
         this.screenY = gp.screenHeight/2 - (gp.tileSize/2);
 
-        this.gp = gp;
         this.keyH = keyH;
 
         setDefaultValues();
@@ -74,8 +76,8 @@ public abstract class Player extends Entity implements LidarComEventos {
 
     public void setDefaultValues() {
 
-        envX = 100;  // player starting position
-        envY = 100;
+        envX = 14 * gp.tileSize;  // player starting position
+        envY = 26 * gp.tileSize;
         speed = 4;
         direction = "down";  // player starts facing down
     }
@@ -117,9 +119,16 @@ public abstract class Player extends Entity implements LidarComEventos {
                 direction = "left";
             }
 
-            /* ------------ check tile collision -------------- */
+            /* ------------ check tile/object collision -------------- */
+
+            // tile collision
             collisionOn = false;
             gp.cChecker.checkTile(this);
+
+            // object collision
+            int objIndex = gp.cChecker.checkObject(this, true);
+
+            pegarItem(objIndex);
 
             // if collision is false, player can move
             if (!collisionOn) {
@@ -156,6 +165,14 @@ public abstract class Player extends Entity implements LidarComEventos {
             spriteNum = 1;
         }
 
+    }
+
+    public void pegarItem(int index) {
+        List<Item> itens = gp.getItens();
+
+        if (index != 999) {
+            itens.remove(index);
+        }
     }
 
     public void draw(Graphics2D g2) {
@@ -206,7 +223,7 @@ public abstract class Player extends Entity implements LidarComEventos {
 
     public void kitInicial() {
         addItemInventario(new Faca());
-        addItemInventario(new Cantil());
+        addItemInventario(new Canteen());
     }
 
     @Override

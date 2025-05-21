@@ -1,13 +1,20 @@
 package game.ambientes;
 
+import game.graphics.Tile;
+import game.graphics.TileManager;
 import game.itens.alimentos.Liquen;
 import game.itens.materiais.*;
 
-public class AmbienteMontanha extends Ambiente{
-    public AmbienteMontanha() {
+public class AmbienteMontanha extends Ambiente {
+
+    public AmbienteMontanha(TileManager tileM) {
         super("Montanhas",
                 "Um ambiente montanhoso e de difícil travessia",
-                13);
+                13, tileM);
+    }
+
+    public void carregarAmbiente(String path) {
+        super.carregarAmbiente(path);
     }
 
     public void atualizarClimas() {
@@ -17,7 +24,7 @@ public class AmbienteMontanha extends Ambiente{
     }
 
     public void adicionarItens() {
-        adicionarItem(new Liquen(), 1);
+
     }
 
     public void adicionarRecursos() {

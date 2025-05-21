@@ -1,9 +1,13 @@
 package game.entity;
 
+import game.graphics.GamePanel;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class Entity {
+public abstract class Entity {
+
+    public GamePanel gp;
 
     public int envX, envY;  // these variables relate to the position of the player on the environment
     public int speed;
@@ -12,13 +16,21 @@ public class Entity {
     public BufferedImage[] down = new BufferedImage[3];
     public BufferedImage[] left = new BufferedImage[3];
     public BufferedImage[] right = new BufferedImage[3];
+
     public String direction;
 
     public int spriteCounter = 0;
     public int spriteNum = 0;
 
     public Rectangle solidArea;
+
+    public int solidAreaDefaultX, solidAreaDefaultY;
+
     public boolean collisionOn = false;
+
+    public Entity(GamePanel gp) {
+        this.gp = gp;
+    }
 
     public int getEnvX() {
         return this.envX;
