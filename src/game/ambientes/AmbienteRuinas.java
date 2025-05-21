@@ -1,5 +1,6 @@
 package game.ambientes;
 
+import game.graphics.GamePanel;
 import game.graphics.TileManager;
 import game.itens.alimentos.Agua;
 import game.itens.materiais.Madeira;
@@ -8,10 +9,10 @@ import game.itens.remedios.Curativo;
 public class AmbienteRuinas extends Ambiente {
     private TileManager tileM;
 
-    public AmbienteRuinas(TileManager tileM) {
+    public AmbienteRuinas(TileManager tileM, GamePanel gp) {
         super("Ruinas",
                 "Um local repleto de ruínas e construções abandonadas.",
-                9, tileM);
+                9, tileM, gp);
     }
 
     public void carregarAmbiente(String path) {

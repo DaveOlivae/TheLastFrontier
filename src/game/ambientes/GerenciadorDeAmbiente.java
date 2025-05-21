@@ -21,8 +21,10 @@ public class GerenciadorDeAmbiente {
     private int playerMapX;  // these are the coordinates for the player, in the world map
     private int playerMapY;
 
-    public GerenciadorDeAmbiente() {
+    private GamePanel gp;
 
+    public GerenciadorDeAmbiente(GamePanel gp) {
+        this.gp = gp;
         this.playerMapX = 10;
         this.playerMapY = 18;
         this.worldMapNum = new int[worldMapWidth][worldMapHeight];
@@ -31,8 +33,8 @@ public class GerenciadorDeAmbiente {
         loadMap();
     }
 
-    public void update(Player player, GamePanel gp, TileManager tileM) {
-        updateEnvironment(player, gp);
+    public void update(Player player, TileManager tileM) {
+        updateEnvironment(player);
         changeEnvironment(tileM);
     }
 
@@ -70,20 +72,23 @@ public class GerenciadorDeAmbiente {
         }
     }
 
-    public void updateEnvironment(Player player, GamePanel gp) {
+    public void updateEnvironment(Player player) {
 
-        if (player.envX > gp.envWidth - gp.tileSize) {
+        int playerEnvX = player.getEnvX();
+        int playerEnvY = player.getEnvY();
+
+        if (playerEnvX > gp.envWidth - gp.tileSize) {
             this.playerMapX++;
-            player.envX = 0;
-        } else if (player.envX < 0) {
+            player.setEnvX(0);
+        } else if (playerEnvX < 0) {
            this.playerMapX--;
-           player.envX = gp.envWidth - gp.tileSize;
-        } else if (player.envY > gp.envHeight - (gp.tileSize + 5)) {
+           player.setEnvX(gp.envWidth - gp.tileSize);
+        } else if (playerEnvY > gp.envHeight - (gp.tileSize + 5)) {
             this.playerMapY++;
-            player.envY = 0;
-        } else if (player.envY < 0) {
+            player.setEnvY(0);
+        } else if (playerEnvY < 0) {
             this.playerMapY--;
-            player.envY = gp.envHeight - 2*gp.tileSize;
+            player.setEnvY(gp.envHeight - 2*gp.tileSize);
         }
     }
 
@@ -91,7 +96,7 @@ public class GerenciadorDeAmbiente {
         switch (this.worldMapNum[playerMapX][playerMapY]) {
             case 0:
                 if (historico[playerMapX][playerMapY] == null) {
-                    ambienteAtual = new AmbienteFloresta(tileM);
+                    ambienteAtual = new AmbienteFloresta(tileM, gp);
                     historico[playerMapX][playerMapY] = ambienteAtual;
                 } else {
                     ambienteAtual = historico[playerMapX][playerMapY];
@@ -100,7 +105,7 @@ public class GerenciadorDeAmbiente {
                 break;
             case 1:
                 if (historico[playerMapX][playerMapY] == null) {
-                    ambienteAtual = new AmbienteFloresta(tileM);
+                    ambienteAtual = new AmbienteFloresta(tileM, gp);
                     historico[playerMapX][playerMapY] = ambienteAtual;
                 } else {
                     ambienteAtual = historico[playerMapX][playerMapY];
@@ -109,7 +114,7 @@ public class GerenciadorDeAmbiente {
                 break;
             case 2:
                 if (historico[playerMapX][playerMapY] == null) {
-                    ambienteAtual = new AmbienteFloresta(tileM);
+                    ambienteAtual = new AmbienteFloresta(tileM, gp);
                     historico[playerMapX][playerMapY] = ambienteAtual;
                 } else {
                     ambienteAtual = historico[playerMapX][playerMapY];
@@ -118,7 +123,7 @@ public class GerenciadorDeAmbiente {
                 break;
             case 3:
                 if (historico[playerMapX][playerMapY] == null) {
-                    ambienteAtual = new AmbienteFloresta(tileM);
+                    ambienteAtual = new AmbienteFloresta(tileM, gp);
                     historico[playerMapX][playerMapY] = ambienteAtual;
                 } else {
                     ambienteAtual = historico[playerMapX][playerMapY];
@@ -127,7 +132,7 @@ public class GerenciadorDeAmbiente {
                 break;
             case 4:
                 if (historico[playerMapX][playerMapY] == null) {
-                    ambienteAtual = new AmbienteFloresta(tileM);
+                    ambienteAtual = new AmbienteFloresta(tileM, gp);
                     historico[playerMapX][playerMapY] = ambienteAtual;
                 } else {
                     ambienteAtual = historico[playerMapX][playerMapY];
@@ -136,7 +141,7 @@ public class GerenciadorDeAmbiente {
                 break;
             case 5:
                 if (historico[playerMapX][playerMapY] == null) {
-                    ambienteAtual = new AmbienteFloresta(tileM);
+                    ambienteAtual = new AmbienteFloresta(tileM, gp);
                     historico[playerMapX][playerMapY] = ambienteAtual;
                 } else {
                     ambienteAtual = historico[playerMapX][playerMapY];
@@ -145,7 +150,7 @@ public class GerenciadorDeAmbiente {
                 break;
             case 6:
                 if (historico[playerMapX][playerMapY] == null) {
-                    ambienteAtual = new AmbienteFloresta(tileM);
+                    ambienteAtual = new AmbienteFloresta(tileM, gp);
                     historico[playerMapX][playerMapY] = ambienteAtual;
                 } else {
                     ambienteAtual = historico[playerMapX][playerMapY];

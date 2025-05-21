@@ -1,5 +1,6 @@
 package game.ambientes;
 
+import game.graphics.GamePanel;
 import game.graphics.TileManager;
 import game.itens.Item;
 import game.itens.alimentos.Agua;
@@ -17,10 +18,10 @@ import java.util.Scanner;
 
 public class AmbienteCaverna extends Ambiente {
 
-    public AmbienteCaverna(TileManager tileM) {
+    public AmbienteCaverna(TileManager tileM, GamePanel gp) {
         super("Caverna",
                 "Um ambiente subterrâneo e muito escuro.",
-                18, tileM);
+                18, tileM, gp);
     }
 
     public void carregarAmbiente(String path) {

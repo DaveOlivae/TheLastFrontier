@@ -1,5 +1,6 @@
 package game.ambientes;
 
+import game.graphics.GamePanel;
 import game.graphics.Tile;
 import game.graphics.TileManager;
 import game.itens.alimentos.Liquen;
@@ -7,10 +8,10 @@ import game.itens.materiais.*;
 
 public class AmbienteMontanha extends Ambiente {
 
-    public AmbienteMontanha(TileManager tileM) {
+    public AmbienteMontanha(TileManager tileM, GamePanel gp) {
         super("Montanhas",
                 "Um ambiente montanhoso e de difícil travessia",
-                13, tileM);
+                13, tileM, gp);
     }
 
     public void carregarAmbiente(String path) {

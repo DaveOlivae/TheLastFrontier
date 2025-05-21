@@ -1,8 +1,11 @@
 package game.ambientes;
 
 import game.LidarComEventos;
+import game.entity.Entity;
+import game.entity.NPC_OldMan;
 import game.entity.Player;
 import game.eventos.Evento;
+import game.graphics.GamePanel;
 import game.graphics.TileManager;
 import game.itens.*;
 
@@ -18,9 +21,11 @@ public abstract class Ambiente implements LidarComEventos {
     private List<Evento> eventosAtivos;
 
     private List<Item> itens;
+    private List<Entity> npc;
     private TileManager tileM;
+    private GamePanel gp;
 
-    public Ambiente(String nome, String descricao, int dificuldadeExploracao, TileManager tileM) {
+    public Ambiente(String nome, String descricao, int dificuldadeExploracao, TileManager tileM, GamePanel gp) {
         this.nome = nome;
         this.descricao = descricao;
         this.dificuldadeExploracao = dificuldadeExploracao;
@@ -28,7 +33,9 @@ public abstract class Ambiente implements LidarComEventos {
         this.recursos = new HashMap<>();
         this.eventosAtivos = new ArrayList<>();
 
+        this.gp = gp;
         this.itens = new ArrayList<>();
+        this.npc = new ArrayList<>();
         this.tileM = tileM;
 
         adicionarItens();
@@ -43,6 +50,11 @@ public abstract class Ambiente implements LidarComEventos {
     public abstract void adicionarRecursos();
 
     public abstract void atualizarClimas();
+
+    public void adicionarNPC(Entity npc) {
+        // isso aqui eh so pra teste
+        this.npc.add(npc);
+    }
 
     public void carregarAmbiente(String path) {
         tileM.loadMap(path);
@@ -101,6 +113,14 @@ public abstract class Ambiente implements LidarComEventos {
 
     public List<Item> getItens() {
         return this.itens;
+    }
+
+    public List<Entity> getNpc() {
+        return this.npc;
+    }
+
+    public GamePanel getGp() {
+        return this.gp;
     }
 
     public void setDificuldadeExploracao(int dificuldadeExploracao) {

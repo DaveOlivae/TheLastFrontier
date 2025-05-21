@@ -39,7 +39,7 @@ public abstract class Player extends Entity implements LidarComEventos {
 
     public Player(String nome, int vida, int fome, int sede, int energia, int sanidade, int pesoTotal,
                   int espacoDisponivel, int exploracao, int rastreamento, GamePanel gp, KeyHandler keyH) {
-        super(gp);
+        super(gp, 8, 16, 48, 48, 14 * gp.tileSize, 26 * gp.tileSize, 4, "down");
         this.nome = nome;
         this.vida = vida;
         this.fome = fome;
@@ -53,55 +53,17 @@ public abstract class Player extends Entity implements LidarComEventos {
         this.eventosAtivos = new ArrayList<>();
 
         // config for the player collision rectangle
-
-        this.solidArea = new Rectangle();
-        solidArea.x = 8;
-        solidArea.y = 16;
-        solidAreaDefaultX = solidArea.x;
-        solidAreaDefaultY = solidArea.y;
-        solidArea.width = 48;
-        solidArea.height = 48;
+        setSolidAreaDefaultX(getSolidArea().x);
+        setSolidAreaDefaultY(getSolidArea().y);
 
         this.screenX = gp.screenWidth/2 - (gp.tileSize/2);
         this.screenY = gp.screenHeight/2 - (gp.tileSize/2);
 
         this.keyH = keyH;
 
-        setDefaultValues();
-
-        getPlayerImage();
+        getPlayerImage("/sprites/littleguy1.png");
 
         kitInicial();
-    }
-
-    public void setDefaultValues() {
-
-        envX = 14 * gp.tileSize;  // player starting position
-        envY = 26 * gp.tileSize;
-        speed = 4;
-        direction = "down";  // player starts facing down
-    }
-
-    public void getPlayerImage() {
-        // this method loads/crops the sprites of the player
-
-        SpriteSheet spriteSheet = new SpriteSheet("/sprites/player/01-generic.png");
-
-        for (int i = 0; i < 3; i++) {
-            up[i] = spriteSheet.getFrame(i * 16, 48, 16, 16);
-        }
-
-        for (int i = 0; i < 3; i++) {
-            down[i] = spriteSheet.getFrame(i * 16, 0, 16, 16);
-        }
-
-        for (int i = 0; i < 3; i++) {
-            right[i] = spriteSheet.getFrame(i * 16, 32, 16, 16);
-        }
-
-        for (int i = 0; i < 3; i++) {
-            left[i] = spriteSheet.getFrame(i * 16, 16, 16, 16);
-        }
     }
 
     public void update() {
@@ -110,59 +72,70 @@ public abstract class Player extends Entity implements LidarComEventos {
         if (keyH.upPressed || keyH.downPressed || keyH.leftPressed || keyH.rightPressed) {
 
             if (this.keyH.upPressed) {
-                direction = "up";
+                setDirection("up");
             } else if (this.keyH.downPressed) {
-                direction = "down";
+                setDirection("down");
             } else if (keyH.rightPressed) {
-                direction = "right";
+                setDirection("right");
             } else {
-                direction = "left";
+                setDirection("left");
             }
 
             /* ------------ check tile/object collision -------------- */
 
             // tile collision
-            collisionOn = false;
-            gp.cChecker.checkTile(this);
+            setCollisionOn(false);
+            gp.getcChecker().checkTile(this);
 
             // object collision
-            int objIndex = gp.cChecker.checkObject(this, true);
+            int objIndex = gp.getcChecker().checkObject(this, true);
 
             pegarItem(objIndex);
 
+            // check collision with npcs
+
+            int npcIndex = gp.getcChecker().checkEntity(this, gp.getNPCs());
+
+            interagirNPC(npcIndex);
+
             // if collision is false, player can move
-            if (!collisionOn) {
-                switch (direction) {
+            if (!getCollisionOn()) {
+                int newEnvY = getEnvY();
+                int newEnvX = getEnvX();
+                switch (getDirection()) {
                     case "up":
-                        envY -= speed;
+                        newEnvY -= getSpeed();
                         break;
                     case "down":
-                        envY += speed;
+                        newEnvY += getSpeed();
                         break;
                     case "right":
-                        envX += speed;
+                        newEnvX += getSpeed();
                         break;
                     case "left":
-                        envX -= speed;
+                        newEnvX -= getSpeed();
                         break;
                 }
+                setEnvY(newEnvY);
+                setEnvX(newEnvX);
             }
 
             /* --------- sprite changer ----------- */
 
             // every time the sprite counter is over 5, the sprite num will changes by one, the sprite num is the index
             // for the sprites array
-            ++spriteCounter;
-            if (spriteCounter > 5) {
-                ++spriteNum;
-                spriteCounter = 0;
+
+            setSpriteCounter(getSpriteCounter() + 1);
+            if (getSpriteCounter() > 5) {
+                setSpriteNum(getSpriteNum() + 1);
+                setSpriteCounter(0);
             }
 
-            if (spriteNum > 2) {
-                spriteNum = 0;
+            if (getSpriteNum() > 2) {
+                setSpriteNum(0);
             }
         } else {
-            spriteNum = 1;
+            setSpriteNum(1);
         }
 
     }
@@ -175,48 +148,52 @@ public abstract class Player extends Entity implements LidarComEventos {
         }
     }
 
+    public void interagirNPC(int index) {
+        if (index != 999) {
+
+        }
+    }
+
     public void draw(Graphics2D g2) {
 
-        BufferedImage image = null;
-
-        switch (direction) {
+        switch (getDirection()) {
             case "up":
-                image = up[spriteNum];
+                setImage(up[getSpriteNum()]);
                 break;
             case "down":
-                image = down[spriteNum];
+                setImage(down[getSpriteNum()]);
                 break;
             case "right":
-                image = right[spriteNum];
+                setImage(right[getSpriteNum()]);
                 break;
             case "left":
-                image = left[spriteNum];
+                setImage(left[getSpriteNum()]);
                 break;
         }
 
         int x = screenX;
         int y = screenY;
 
-        if (screenX > envX) {
-            x = envX;
+        if (screenX > getEnvX()) {
+            x = getEnvX();
         }
-        if (screenY > envY) {
-            y = envY;
+        if (screenY > getEnvY()) {
+            y = getEnvY();
         }
 
         int rightOffset = gp.screenWidth - screenX;
 
-        if (rightOffset > gp.envWidth - envX) {
-            x = gp.screenWidth - (gp.envWidth - envX);
+        if (rightOffset > gp.envWidth - getEnvX()) {
+            x = gp.screenWidth - (gp.envWidth - getEnvX());
         }
 
         int bottomOffset = gp.screenHeight - screenY;
 
-        if (bottomOffset > gp.envHeight - envY) {
-            y = gp.screenHeight - (gp.envHeight - envY);
+        if (bottomOffset > gp.envHeight - getEnvY()) {
+            y = gp.screenHeight - (gp.envHeight - getEnvY());
         }
 
-        g2.drawImage(image, x, y, gp.tileSize, gp.tileSize, null);
+        g2.drawImage(getImage(), x, y, gp.tileSize, gp.tileSize, null);
     }
 
     /* metodos relacionados aos jogo.eventos */

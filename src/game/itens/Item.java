@@ -28,38 +28,42 @@ public abstract class Item {
     }
 
     public void draw(Graphics2D g2, GamePanel gp) {
+        Player player = gp.getPlayer();
+        int playerEnvX = player.getEnvX();
+        int playerEnvY = player.getEnvY();
+
         // this method is similar to the draw method of the tile manager
         // it has to deal with the absolute and relative positions of the object, and take care of them when the player
         // is at the borders of the environment
 
-        int screenX = envX - gp.player.envX + gp.player.screenX;
-        int screenY = envY - gp.player.envY + gp.player.screenY;
+        int screenX = envX - playerEnvX + player.screenX;
+        int screenY = envY - playerEnvY + player.screenY;
 
-        if (gp.player.screenX > gp.player.envX) {
+        if (player.screenX > playerEnvX) {
             screenX = envX;
         }
-        if (gp.player.screenY > gp.player.envY) {
+        if (player.screenY > playerEnvY) {
             screenY = envY;
         }
-        int rightOffset = gp.screenWidth - gp.player.screenX;
-        if (rightOffset > gp.envWidth - gp.player.envX) {
+        int rightOffset = gp.screenWidth - player.screenX;
+        if (rightOffset > gp.envWidth - playerEnvX) {
             screenX = gp.screenWidth - (gp.envWidth - envX);
         }
-        int bottomOffset = gp.screenHeight - gp.player.screenY;
-        if (bottomOffset > gp.envHeight - gp.player.envY) {
+        int bottomOffset = gp.screenHeight - player.screenY;
+        if (bottomOffset > gp.envHeight - playerEnvY) {
             screenY = gp.screenHeight - (gp.envHeight - envY);
         }
 
-        if (envX + gp.tileSize > gp.player.envX - gp.player.screenX &&
-                envX - gp.tileSize < gp.player.envX + gp.player.screenX &&
-                envY + gp.tileSize > gp.player.envY - gp.player.screenY &&
-                envY - gp.tileSize < gp.player.envY + gp.player.screenY) {
+        if (envX + gp.tileSize > playerEnvX - player.screenX &&
+                envX - gp.tileSize < playerEnvX + player.screenX &&
+                envY + gp.tileSize > playerEnvY - player.screenY &&
+                envY - gp.tileSize < playerEnvY + player.screenY) {
 
             g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);
-        } else if (gp.player.screenX > gp.player.envX ||
-                gp.player.screenY > gp.player.envY ||
-                rightOffset > gp.envWidth - gp.player.envX ||
-                bottomOffset > gp.envHeight - gp.player.envY) {
+        } else if (player.screenX > playerEnvX ||
+                player.screenY > playerEnvY ||
+                rightOffset > gp.envWidth - playerEnvX ||
+                bottomOffset > gp.envHeight - playerEnvY) {
 
             // this condition deals with the rendering of tiles when the player is in the border area
             g2.drawImage(image, screenX, screenY, gp.tileSize, gp.tileSize, null);

@@ -1,5 +1,6 @@
 package game.ambientes;
 
+import game.graphics.GamePanel;
 import game.graphics.Tile;
 import game.graphics.TileManager;
 import game.itens.alimentos.*;
@@ -7,10 +8,10 @@ import game.itens.materiais.Pedra;
 
 public class AmbienteLagoRio extends Ambiente {
 
-    public AmbienteLagoRio(TileManager tileM) {
+    public AmbienteLagoRio(TileManager tileM, GamePanel gp) {
         super("Lago e Rio",
                 "Uma planície em que um rio desagua num grande lago.",
-                6, tileM);
+                6, tileM, gp);
     }
 
     public void carregarAmbiente(String path) {

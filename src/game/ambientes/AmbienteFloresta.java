@@ -1,5 +1,7 @@
 package game.ambientes;
 
+import game.entity.NPC_OldMan;
+import game.graphics.GamePanel;
 import game.graphics.Tile;
 import game.graphics.TileManager;
 import game.itens.alimentos.*;
@@ -8,11 +10,16 @@ import game.itens.materiais.Pedra;
 
 public class AmbienteFloresta extends Ambiente {
 
-    public AmbienteFloresta(TileManager tileM) {
+    public AmbienteFloresta(TileManager tileM, GamePanel gp) {
         super("Floresta",
                 "Um local de vegetação densa e fauna abundante",
-                5, tileM);
+                5, tileM, gp);
         adicionarItens();
+        adicionarNPCs();
+    }
+
+    public void adicionarNPCs() {
+        super.adicionarNPC(new NPC_OldMan(getGp(), 9 * getGp().tileSize, 8 * getGp().tileSize));
     }
 
     public void carregarAmbiente(String path) {

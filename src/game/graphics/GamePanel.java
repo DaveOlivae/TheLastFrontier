@@ -4,6 +4,7 @@ import game.CollisionChecker;
 import game.Sound;
 import game.ambientes.Ambiente;
 import game.ambientes.GerenciadorDeAmbiente;
+import game.entity.Entity;
 import game.entity.Player;
 import game.entity.Rastreador;
 import game.input.KeyHandler;
@@ -38,16 +39,16 @@ public class GamePanel extends JPanel implements Runnable{
     int FPS = 60;
 
     // system
-    GerenciadorDeAmbiente envM = new GerenciadorDeAmbiente();
+    private GerenciadorDeAmbiente envM = new GerenciadorDeAmbiente(this);
     public TileManager tileM = new TileManager(this);
-    KeyHandler keyH = new KeyHandler(this);
-    Sound music = new Sound();
-    Thread gameThread;
-    public CollisionChecker cChecker = new CollisionChecker(this, envM);
-    UI ui = new UI(this);
+    private KeyHandler keyH = new KeyHandler(this);
+    private Sound music = new Sound();
+    private Thread gameThread;
+    private CollisionChecker cChecker = new CollisionChecker(this, envM);
+    private UI ui = new UI(this);
 
     // entities and items
-    public Player player = new Rastreador("none", this, keyH);
+    private Player player = new Rastreador("none", this, keyH);
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
@@ -93,8 +94,16 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void update() {
+        Ambiente ambienteAtual = envM.getAmbienteAtual();
+
         if (gameState == playState) {
             player.update();
+
+            for (Entity npc : ambienteAtual.getNpc()) {
+                if (npc != null) {
+                    npc.update();
+                }
+            }
         }
     }
 
@@ -106,7 +115,16 @@ public class GamePanel extends JPanel implements Runnable{
                 item.draw(g2, this);
             }
         }
+    }
 
+    private void drawNPC(Graphics2D g2) {
+        Ambiente ambienteAtual = envM.getAmbienteAtual();
+
+        for (Entity npc : ambienteAtual.getNpc()) {
+            if (npc != null) {
+                npc.draw(g2);
+            }
+        }
     }
 
     public void paintComponent(Graphics g) {
@@ -115,12 +133,14 @@ public class GamePanel extends JPanel implements Runnable{
 
         Graphics2D g2 = (Graphics2D)g;
 
-        envM.update(player, this, tileM);
+        envM.update(player, tileM);
 
         // TILE
         tileM.draw(g2);
 
         drawObjects(g2);
+
+        drawNPC(g2);
 
         // PLAYER
         player.draw(g2);
@@ -144,6 +164,18 @@ public class GamePanel extends JPanel implements Runnable{
     public void playSE(int i) {
         music.setFile(i);
         music.play();
+    }
+
+    public Player getPlayer() {
+        return this.player;
+    }
+
+    public CollisionChecker getcChecker() {
+        return this.cChecker;
+    }
+
+    public List<Entity> getNPCs() {
+        return envM.getAmbienteAtual().getNpc();
     }
 
     public List<Item> getItens() {
