@@ -1,70 +1,76 @@
 package game.entity;
 
-import game.ambientes.Ambiente;
-import game.ambientes.GerenciadorDeAmbiente;
-import game.eventos.Evento;
+import game.CombatHandler;
 import game.graphics.GamePanel;
-import game.graphics.SpriteSheet;
 import game.input.KeyHandler;
 import game.itens.*;
 
-import game.LidarComEventos;
-import game.itens.armas.Faca;
-
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
-public abstract class Player extends Entity implements LidarComEventos {
-    private String nome;
-    private int vida;
-    private int fome;
-    private int sede;
-    private int energia;
-    private int sanidade;
-    private int exploracao;
-    private int rastreamento;
-    private Inventario inventario;
-    private Item itemEquipado;
-    private List<Evento> eventosAtivos;  // essa lista vai guardar os jogo.eventos ativos relacionados ao personagem
-    private boolean protegido; // fiz esse atributo pra caso o jogador encontre abrigo não precisar passar por
-                                // evento aleatorio
+public abstract class Player extends Entity {
 
     public final int screenX;
     public final int screenY;
 
+    private CombatHandler combH;
     private KeyHandler keyH;
 
-    public Player(String nome, int vida, int fome, int sede, int energia, int sanidade, int pesoTotal,
-                  int espacoDisponivel, int exploracao, int rastreamento, GamePanel gp, KeyHandler keyH) {
-        super(gp, 8, 16, 48, 48, 14 * gp.tileSize, 26 * gp.tileSize, 4, "down");
-        this.nome = nome;
-        this.vida = vida;
-        this.fome = fome;
-        this.sede = sede;
-        this.energia = energia;
-        this.sanidade = sanidade;
-        this.inventario = new Inventario(pesoTotal, espacoDisponivel);
-        this.exploracao = exploracao;  // exploracao eh habilidade de explorar e vai de 1 a 20
-        this.rastreamento = rastreamento; // tbm vai de 1 a 20
-        this.protegido = false; // o jogador vai comecar nao estando protegido
-        this.eventosAtivos = new ArrayList<>();
+    private Inventory inventory;
+    private Item equippedItem;
 
-        // config for the player collision rectangle
+    private int maxHunger = 100;
+    private int hunger;
+
+    private int maxThirst = 100;
+    private int thirst;
+
+    private int maxEnergy = 100;
+    private int energy;
+
+    private int maxSanity = 100;
+    private int sanity;
+
+
+    public Player(String name, int maxLife, int maxHunger, int maxThirst, int maxEnergy, int maxSanity, int maxWeight, GamePanel gp, KeyHandler keyH) {
+
+        super(name, gp, 8, 16, 48, 48, 4, "down");
+
+        /* -------- config for the player collision rectangle --------------- */
         setSolidAreaDefaultX(getSolidArea().x);
         setSolidAreaDefaultY(getSolidArea().y);
 
+        /* --------- players starting position -------------- */
+        setEnvX(14 * gp.tileSize);
+        setEnvY(26 * gp.tileSize);
+
         this.screenX = gp.screenWidth/2 - (gp.tileSize/2);
-        this.screenY = gp.screenHeight/2 - (gp.tileSize/2);
+        this.screenY = gp.screenHeight/2 - (gp.tileSize/2) + gp.hudHeight/2;
 
         this.keyH = keyH;
 
-        getPlayerImage("/sprites/littleguy1.png");
+        /* ------------ player's attributes ---------------- */
+        setMaxLife(maxLife);
+        setLife(getMaxLife());
 
-        kitInicial();
+        this.maxHunger = maxHunger;
+        this.hunger = 0;
+
+        this.maxThirst = maxThirst;
+        this.thirst = 0;
+
+        this.maxEnergy = maxEnergy;
+        this.energy = maxEnergy;
+
+        this.maxSanity = maxSanity;
+        this.sanity = maxSanity;
+
+        this.inventory = new Inventory(maxWeight);
+
+        starterKit();
     }
+
+    public abstract void starterKit();
 
     public void update() {
 
@@ -90,13 +96,17 @@ public abstract class Player extends Entity implements LidarComEventos {
             // object collision
             int objIndex = gp.getcChecker().checkObject(this, true);
 
-            pegarItem(objIndex);
+            pickupItem(objIndex);
 
             // check collision with npcs
 
             int npcIndex = gp.getcChecker().checkEntity(this, gp.getNPCs());
 
-            interagirNPC(npcIndex);
+            interactNPC(npcIndex);
+
+            int enemyIndex = gp.getcChecker().checkEntity(this, gp.getEnemies());
+
+            attacked(enemyIndex);
 
             // if collision is false, player can move
             if (!getCollisionOn()) {
@@ -136,21 +146,40 @@ public abstract class Player extends Entity implements LidarComEventos {
             }
         } else {
             setSpriteNum(1);
+            int npcIndex = gp.getcChecker().checkEntity(this, gp.getNPCs());
+
+            interactNPC(npcIndex);
         }
 
     }
 
-    public void pegarItem(int index) {
+    public void pickupItem(int index) {
         List<Item> itens = gp.getItens();
 
         if (index != 999) {
-            itens.remove(index);
+            Item item = itens.get(index);
+
+            if (inventory.addItem(item)) {
+                itens.remove(index);
+            }
         }
     }
 
-    public void interagirNPC(int index) {
+    public void interactNPC(int index) {
         if (index != 999) {
+            if (gp.getKeyH().ePressed) {
+                gp.gameState = gp.dialogueState;
+                gp.getNPC(index).speak();
+//                gp.getKeyH().ePressed = false;
+            }
+        }
+    }
 
+    public void attacked(int index) {
+        if (index != 999) {
+            gp.gameState = gp.combatState;
+
+            combH = new CombatHandler(this, gp.getEnemy(index));
         }
     }
 
@@ -177,8 +206,8 @@ public abstract class Player extends Entity implements LidarComEventos {
         if (screenX > getEnvX()) {
             x = getEnvX();
         }
-        if (screenY > getEnvY()) {
-            y = getEnvY();
+        if (screenY > getEnvY() + gp.hudHeight) {
+            y = getEnvY() + gp.hudHeight;
         }
 
         int rightOffset = gp.screenWidth - screenX;
@@ -196,154 +225,67 @@ public abstract class Player extends Entity implements LidarComEventos {
         g2.drawImage(getImage(), x, y, gp.tileSize, gp.tileSize, null);
     }
 
-    /* metodos relacionados aos jogo.eventos */
+    public void selectItem() {
+        int itemIndex = gp.getUi().getIndexOnSlot();
 
-    public void kitInicial() {
-        addItemInventario(new Faca());
-        addItemInventario(new Canteen());
-    }
+        if (itemIndex < inventory.getItens().size()) {
+            Item item = inventory.getItem(itemIndex);
 
-    @Override
-    public void adicionarEvento(Evento evento) {
-        this.eventosAtivos.add(evento);
-    }
-
-    @Override
-    public boolean eventoNaLista(Class<? extends Evento> tipo) {
-        for (Evento e : this.eventosAtivos) {
-            if (tipo.isInstance(e)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public void removerEvento(Class<? extends Evento> tipo) {
-    }
-
-    /* metodos relacionados aos itens e inventario */
-
-    public void acessarInventario(Scanner input) {
-        this.inventario.acessarInventario(input, this);
-    }
-
-    public void mostrarInventario() {
-        this.inventario.mostrarItens(this);
-    }
-
-    public boolean playerInvEmpty() {
-        return this.inventario.emptyInventory();
-    }
-
-    public void addItemInventario(Item item) {
-        this.inventario.adicionarItem(item);
-    }
-
-    public void remvItemInventario(int i) {
-        this.inventario.removerItem(i);
-    }
-
-    public void inspecionarItem(int i) {
-        this.inventario.inspecionarItem(i);
-    }
-
-    public void usarItem(int i, Player jogador) {
-        inventario.usarItem(i, jogador);
-    }
-
-    public void equiparItem(Item item) {
-        this.itemEquipado = item;
-    }
-
-    /* metodos relacionados aos atributos*/
-
-    public void attFomeSede() {
-        this.fome += 3;
-        this.sede += 4;  // sede maior que a fome
-    }
-
-    public void attEnergia(int pontos) {
-        if ((this.energia += pontos) <= 0) {
-            this.energia = 0;
+            equippedItem = item;
         }
     }
 
-    public void attVida(int pontos) {
-
+    public void equipItem(Item item) {
+        equippedItem = item;
     }
 
-    public void restaurarFome(int pontos) {
-        if((this.fome -= pontos) < 0) {
-            this.fome = 0;
-        }
+    public Item getEquippedItem() {
+        return equippedItem;
     }
 
-    public void restaurarSede(int pontos) {
-        if((this.sede -= pontos) < 0) {
-            this.sede = 0;
-        }
+    public List<Item> itens() {
+        return inventory.getItens();
     }
 
-    public void diminuirVida(int valor) {
-        this.vida -= valor;
+    public void addItem(Item item) {
+
+        // the inventory method returns a boolean, but it is only necessary when checking if the item was added
+        inventory.addItem(item);
     }
 
-    public void estaProtegido() {
-        this.protegido = true;
+    public CombatHandler getCombH() {
+        return combH;
     }
 
-    // gets e sets
-
-    public int getExploracao() {
-        return this.exploracao;
+    public int getMaxHunger() {
+        return maxHunger;
     }
 
-    public Item getItemEquipado() {
-        return this.itemEquipado;
+    public int getHunger() {
+        return hunger;
     }
 
-    public String getName() {
-        return this.nome;
+    public int getMaxThirst() {
+        return maxThirst;
     }
 
-    public int getVida() {
-        return this.vida;
+    public int getThirst() {
+        return thirst;
     }
 
-    public int getFome() {
-        return this.fome;
+    public int getMaxEnergy() {
+        return maxEnergy;
     }
 
-    public int getSede() {
-        return this.sede;
+    public int getEnergy() {
+        return energy;
     }
 
-    public int getEnergia() {
-        return this.energia;
+    public int getMaxSanity() {
+        return maxSanity;
     }
 
-    public int getSanidade() {
-        return this.sanidade;
-    }
-
-    public int getRastreamento() {
-        return this.rastreamento;
-    }
-
-    public int getInvPeso() {
-        return this.inventario.getPeso();
-    }
-
-    public int getInvEspaco() {
-        return this.inventario.getEspaco();
-    }
-
-    public int getInvPesoTot() {
-        return this.inventario.getPesoTotal();
-    }
-
-    public int getInvEspDisp() {
-        return this.inventario.getEspacoDisponivel();
+    public int getSanity() {
+        return sanity;
     }
 }

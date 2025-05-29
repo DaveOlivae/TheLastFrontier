@@ -1,6 +1,6 @@
 package game.eventos;
 
-import game.ambientes.Ambiente;
+import game.ambientes.Environment;
 import game.entity.Player;
 
 public abstract class Evento {
@@ -12,7 +12,7 @@ public abstract class Evento {
         this.descricao = descricao;
     }
 
-    public abstract void executar(Player jogador, Ambiente local);
+    public abstract void executar(Player jogador, Environment local);
 
     public abstract AlvoDoEvento getAlvoDoEvento();
 

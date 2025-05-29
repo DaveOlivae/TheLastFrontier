@@ -132,13 +132,14 @@ public class TileManager {
             int screenX = envX - playerEnvX + player.screenX;
             int screenY = envY - playerEnvY + player.screenY;
 
+
             /* ------ stop moving the camera at the edge  -------- */
 
             if (player.screenX > playerEnvX) {
                 screenX = envX;
             }
-            if (player.screenY > playerEnvY) {
-                screenY = envY;
+            if (player.screenY > playerEnvY + gp.hudHeight) {
+                screenY = envY + gp.hudHeight;
             }
             int rightOffset = gp.screenWidth - player.screenX;
             if (rightOffset > gp.envWidth - playerEnvX) {

@@ -7,8 +7,4 @@ public class Curativo extends Remedio{
         super("Curativo", 1, 1, "Bandagem", "Cura 20 de vida");
     }
 
-    @Override
-    public void usar(Player jogador) {
-        jogador.attVida(20);
-    }
 }

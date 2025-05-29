@@ -1,7 +1,6 @@
 package game;
 
-import game.ambientes.Ambiente;
-import game.ambientes.GerenciadorDeAmbiente;
+import game.ambientes.EnvironmentManager;
 import game.entity.Entity;
 import game.graphics.GamePanel;
 import game.itens.Item;
@@ -12,9 +11,9 @@ import java.util.List;
 public class CollisionChecker {
 
     private GamePanel gp;
-    private GerenciadorDeAmbiente envM;
+    private EnvironmentManager envM;
 
-    public CollisionChecker(GamePanel gp, GerenciadorDeAmbiente envM) {
+    public CollisionChecker(GamePanel gp, EnvironmentManager envM) {
         this.envM = envM;
         this.gp = gp;
     }

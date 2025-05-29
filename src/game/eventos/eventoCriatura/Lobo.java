@@ -1,6 +1,6 @@
 package game.eventos.eventoCriatura;
 
-import game.ambientes.Ambiente;
+import game.ambientes.Environment;
 import game.eventos.AlvoDoEvento;
 import game.entity.Player;
 
@@ -16,7 +16,7 @@ public class Lobo extends EventoCriatura{
     }
 
     @Override
-    public void executar(Player jogador, Ambiente local) {
+    public void executar(Player jogador, Environment local) {
 //        // vou ter que criar um scanner aqui mesmo
 //        EventoDeAtaque batalha = new EventoDeAtaque();
 //

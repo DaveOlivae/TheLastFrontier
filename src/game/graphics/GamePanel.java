@@ -1,12 +1,12 @@
 package game.graphics;
 
 import game.CollisionChecker;
+import game.CombatHandler;
 import game.Sound;
-import game.ambientes.Ambiente;
-import game.ambientes.GerenciadorDeAmbiente;
+import game.ambientes.Environment;
+import game.ambientes.EnvironmentManager;
 import game.entity.Entity;
 import game.entity.Player;
-import game.entity.Rastreador;
 import game.input.KeyHandler;
 import game.itens.Item;
 
@@ -21,9 +21,10 @@ public class GamePanel extends JPanel implements Runnable{
     final int scale = 4;
     public final int tileSize = originalTileSize * scale;
     public final int maxScreenCol = 16;
-    public final int maxScreenRow = 12;
+    public final int maxScreenRow = 14;
     public final int screenWidth = tileSize * maxScreenCol;
     public final int screenHeight = tileSize * maxScreenRow;
+    public final int hudHeight = 3*tileSize - tileSize/2;
 
     // environment settings
     public final int maxEnvCol = 30;
@@ -33,13 +34,17 @@ public class GamePanel extends JPanel implements Runnable{
 
     // game state
     public int gameState;
+    public final int titleState = 0;
     public final int playState = 1;
     public final int pauseState = 2;
+    public final int dialogueState = 3;
+    public final int combatState = 4;
+    public final int inventoryState = 5;
 
     int FPS = 60;
 
     // system
-    private GerenciadorDeAmbiente envM = new GerenciadorDeAmbiente(this);
+    private EnvironmentManager envM = new EnvironmentManager(this);
     public TileManager tileM = new TileManager(this);
     private KeyHandler keyH = new KeyHandler(this);
     private Sound music = new Sound();
@@ -48,21 +53,23 @@ public class GamePanel extends JPanel implements Runnable{
     private UI ui = new UI(this);
 
     // entities and items
-    private Player player = new Rastreador("none", this, keyH);
+    private Player player;
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
-        this.setBackground(Color.cyan);
+        this.setBackground(Color.black);
         this.setDoubleBuffered(true);
         this.addKeyListener(keyH);
         this.setFocusable(true);
     }
 
     public void setupGame() {
-        // this method is used to set sound and game state
-        playMusic(0);
+        gameState = titleState;
+    }
 
+    public void startGame() {
         gameState = playState;
+        // playMusic(0);
     }
 
     public void startGameThread() {
@@ -94,23 +101,29 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void update() {
-        Ambiente ambienteAtual = envM.getAmbienteAtual();
-
         if (gameState == playState) {
+            envM.update(player, tileM);
             player.update();
 
-            for (Entity npc : ambienteAtual.getNpc()) {
+            Environment currentEnv = envM.getCurrentEnv();
+            for (Entity npc : currentEnv.getNPCs()) {
                 if (npc != null) {
                     npc.update();
+                }
+            }
+
+            for (Entity enemy : currentEnv.getEnemies()) {
+                if (enemy != null) {
+                    enemy.update();
                 }
             }
         }
     }
 
     private void drawObjects(Graphics2D g2) {
-        Ambiente ambienteAtual = envM.getAmbienteAtual();
+        Environment currentEnv = envM.getCurrentEnv();
 
-        for (Item item : ambienteAtual.getItens()) {
+        for (Item item : currentEnv.getItens()) {
             if (item != null) {
                 item.draw(g2, this);
             }
@@ -118,14 +131,25 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     private void drawNPC(Graphics2D g2) {
-        Ambiente ambienteAtual = envM.getAmbienteAtual();
+        Environment currentEnv = envM.getCurrentEnv();
 
-        for (Entity npc : ambienteAtual.getNpc()) {
+        for (Entity npc : currentEnv.getNPCs()) {
             if (npc != null) {
                 npc.draw(g2);
             }
         }
     }
+
+    private void drawEnemies(Graphics2D g2) {
+        Environment currentEnv = envM.getCurrentEnv();
+
+        for (Entity enemy : currentEnv.getEnemies()) {
+            if (enemy != null) {
+                enemy.draw(g2);
+            }
+        }
+    }
+
 
     public void paintComponent(Graphics g) {
         Toolkit.getDefaultToolkit().sync();
@@ -133,22 +157,27 @@ public class GamePanel extends JPanel implements Runnable{
 
         Graphics2D g2 = (Graphics2D)g;
 
-        envM.update(player, tileM);
+        if (gameState == titleState) {
+            ui.draw(g2);
+        } else {
 
-        // TILE
-        tileM.draw(g2);
+            // TILE
+            tileM.draw(g2);
 
-        drawObjects(g2);
+            drawObjects(g2);
 
-        drawNPC(g2);
+            drawNPC(g2);
 
-        // PLAYER
-        player.draw(g2);
+            drawEnemies(g2);
 
-        // UI
-        ui.draw(g2);
+            // PLAYER
+            player.draw(g2);
 
-        g2.dispose();
+            // UI
+            ui.draw(g2);
+
+            g2.dispose();
+        }
     }
 
     public void playMusic(int i) {
@@ -166,6 +195,22 @@ public class GamePanel extends JPanel implements Runnable{
         music.play();
     }
 
+    public CombatHandler getCombatHandler() {
+        return player.getCombH();
+    }
+
+    public UI getUi() {
+        return this.ui;
+    }
+
+    public KeyHandler getKeyH() {
+        return keyH;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
     public Player getPlayer() {
         return this.player;
     }
@@ -174,11 +219,27 @@ public class GamePanel extends JPanel implements Runnable{
         return this.cChecker;
     }
 
+    public Entity getNPC(int index) {
+        return envM.getCurrentEnv().getNPC(index);
+    }
+
     public List<Entity> getNPCs() {
-        return envM.getAmbienteAtual().getNpc();
+        return envM.getCurrentEnv().getNPCs();
+    }
+
+    public List<Entity> getEnemies() {
+        return envM.getCurrentEnv().getEnemies();
+    }
+
+    public Entity getEnemy(int index) {
+        return envM.getCurrentEnv().getEnemy(index);
     }
 
     public List<Item> getItens() {
-        return envM.getAmbienteAtual().getItens();
+        return envM.getCurrentEnv().getItens();
+    }
+
+    public EnvironmentManager getEnvM() {
+        return envM;
     }
 }

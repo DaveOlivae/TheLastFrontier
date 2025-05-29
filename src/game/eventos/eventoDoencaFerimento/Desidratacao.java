@@ -1,6 +1,6 @@
 package game.eventos.eventoDoencaFerimento;
 
-import game.ambientes.Ambiente;
+import game.ambientes.Environment;
 import game.eventos.AlvoDoEvento;
 import game.entity.Player;
 
@@ -14,7 +14,7 @@ public class Desidratacao extends EventoDoencaFerimento{
     }
 
     @Override
-    public void executar(Player jogador, Ambiente local) {
+    public void executar(Player jogador, Environment local) {
 
     }
 

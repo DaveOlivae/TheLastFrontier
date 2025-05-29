@@ -3,28 +3,35 @@ package game.itens;
 import game.entity.Player;
 import game.graphics.GamePanel;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.Objects;
 
 public abstract class Item {
 
     private BufferedImage image;
-    public String name;
+    private String name;
     public boolean collision = false;
     public int envX, envY;
+
     // these values for the rectangle are set because so the rectangle will be exaclty 1 tile
     public Rectangle solidArea = new Rectangle(0, 0, 64, 64);
     public int solidAreaDefaultX, solidAreaDefaultY;
 
-    private int peso;
-    private int durabilidade;
-    private boolean equipavel;
+    private float weight;
+    private int durability;
+    private boolean equipable;
+    private String description;
+    private String type;
 
-    public Item(String name, int peso, int durabilidade, boolean equipavel) {
+    public Item(String type, String name, float weight, int durability, boolean equipable) {
+        this.type = type;
         this.name = name;
-        this.peso = peso;
-        this.durabilidade = durabilidade;
-        this.equipavel = equipavel;
+        this.weight = weight;
+        this.durability = durability;
+        this.equipable = equipable;
     }
 
     public void draw(Graphics2D g2, GamePanel gp) {
@@ -42,8 +49,8 @@ public abstract class Item {
         if (player.screenX > playerEnvX) {
             screenX = envX;
         }
-        if (player.screenY > playerEnvY) {
-            screenY = envY;
+        if (player.screenY > playerEnvY + gp.hudHeight) {
+            screenY = envY + gp.hudHeight;
         }
         int rightOffset = gp.screenWidth - player.screenX;
         if (rightOffset > gp.envWidth - playerEnvX) {
@@ -70,45 +77,43 @@ public abstract class Item {
         }
     }
 
-    public abstract void usar(Player jogador);
+    public void setImage(String path) {
+        BufferedImage image;
 
-    public void diminuirDurabilidade(int pontos) {
-        this.durabilidade -= pontos;
-    }
-
-    public void getAttributes() {
-        System.out.printf("\tNome: %s%n", getName());
-        System.out.printf("\tPeso: %d%n", getPeso());
-        System.out.printf("\tDurabilidade: %d%n", getDurabilidade());
-
-        if (this.equipavel) {
-            System.out.println("\tEquipável?: Sim");
-        } else {
-            System.out.println("\tEquipável?: Não");
+        try {
+            image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(path)));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-    }
 
-    public boolean isEquipavel() {
-        return this.equipavel;
-    }
-
-    public void setImage(BufferedImage image) {
         this.image = image;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public int getDurability() {
+        return durability;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public BufferedImage getImage() {
+        return image;
     }
 
     public String getName() {
         return this.name;
     }
 
-    public int getPeso() {
-        return this.peso;
-    }
-
-    public int getDurabilidade() {
-        return this.durabilidade;
-    }
-
-    public int getEficiencia() {
-        return 0;
+    public float getWeight() {
+        return weight;
     }
 }
