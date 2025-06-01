@@ -1,4 +1,4 @@
-package game;
+package game.logic;
 
 import game.ambientes.EnvironmentManager;
 import game.entity.Entity;
@@ -79,6 +79,8 @@ public class CollisionChecker {
     }
 
     public int checkObject(Entity entity, boolean player) {
+        // this checks either npc or player collision with objects
+
         int index = 999;
 
         Rectangle entitySolidArea = entity.getSolidArea();
@@ -161,6 +163,9 @@ public class CollisionChecker {
     }
 
     public int checkEntity(Entity entity, List<Entity> target) {
+        // this method is used to check if there are any npcs and if the player is going to collide with them
+        // it check the two blocks right in front of the player, considering the direction the player is headed
+
         int index = 999;
 
         Rectangle entitySolidArea = entity.getSolidArea();
@@ -225,6 +230,8 @@ public class CollisionChecker {
     }
 
     public void checkPlayer(Entity entity) {
+        // this method is used to check if the player is going to collide with the player
+
         Entity player = gp.getPlayer();
 
         Rectangle entitySolidArea = entity.getSolidArea();
@@ -274,5 +281,54 @@ public class CollisionChecker {
 
         player.getSolidArea().x = player.getSolidAreaDefaultX();
         player.getSolidArea().y = player.getSolidAreaDefaultY();
+    }
+
+    public void checkBorders(Entity entity) {
+        // this function is used to check if the npcs are going to go out of the environment, they are not supposed to
+        // so the borders are like walls for them
+        // actually they can only walk up until 1 tile before the border
+        Rectangle entitySolidArea = entity.getSolidArea();
+        String entityDirection = entity.getDirection();
+        int entitySpeed = entity.getSpeed();
+        int entityEnvX = entity.getEnvX();
+        int entityEnvY = entity.getEnvY();
+
+        // get entity's solid area position
+        // we take the value of the rectangle x, y and add the environment x, y to get the value on the env
+        entitySolidArea.x = entityEnvX + entitySolidArea.x;
+        entitySolidArea.y = entityEnvY + entitySolidArea.y;
+
+        // get the object's solid area position
+
+        switch (entityDirection) {
+            case "up":
+                entitySolidArea.y -= entitySpeed;
+                if (entitySolidArea.y < gp.tileSize) {
+                    entity.setCollisionOn(true);
+                }
+                break;
+            case "down":
+                entitySolidArea.y += entitySpeed;
+                if (entitySolidArea.y > gp.envHeight - gp.tileSize) {
+                    entity.setCollisionOn(true);
+                }
+                break;
+            case "left":
+                entitySolidArea.x -= entitySpeed;
+                if (entitySolidArea.x < gp.tileSize) {
+                    entity.setCollisionOn(true);
+                }
+                break;
+            case "right":
+                entitySolidArea.x += entitySpeed;
+                if (entitySolidArea.x > gp.envHeight - gp.tileSize) {
+                    entity.setCollisionOn(true);
+                }
+                break;
+        }
+
+        entitySolidArea.x = entity.getSolidAreaDefaultX();
+        entitySolidArea.y = entity.getSolidAreaDefaultY();
+
     }
 }

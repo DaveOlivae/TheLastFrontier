@@ -1,9 +1,10 @@
 package game.entity;
 
-import game.CombatHandler;
+import game.logic.CombatHandler;
 import game.graphics.GamePanel;
 import game.input.KeyHandler;
 import game.itens.*;
+import game.itens.food.Food;
 
 import java.awt.*;
 import java.util.List;
@@ -18,6 +19,8 @@ public abstract class Player extends Entity {
 
     private Inventory inventory;
     private Item equippedItem;
+
+    private int currentEnemy;
 
     private int maxHunger = 100;
     private int hunger;
@@ -151,6 +154,12 @@ public abstract class Player extends Entity {
             interactNPC(npcIndex);
         }
 
+        /* ---------------- UPDATE PLAYER STATS -------------------- */
+
+        if (getLife() <= 0) {
+            gp.gameState = gp.gameOverState;
+        }
+
     }
 
     public void pickupItem(int index) {
@@ -177,9 +186,10 @@ public abstract class Player extends Entity {
 
     public void attacked(int index) {
         if (index != 999) {
+            currentEnemy = index;
             gp.gameState = gp.combatState;
 
-            combH = new CombatHandler(this, gp.getEnemy(index));
+            combH = new CombatHandler(this, gp.getEnemy(index), gp);
         }
     }
 
@@ -231,12 +241,22 @@ public abstract class Player extends Entity {
         if (itemIndex < inventory.getItens().size()) {
             Item item = inventory.getItem(itemIndex);
 
-            equippedItem = item;
+            if (item.getType().equals("weapon")) {
+                equippedItem = item;
+            } else if (item.getType().equals("food")) {
+                Food food = (Food) item;
+                food.eat(this);
+                itens().remove(food);
+            }
         }
     }
 
     public void equipItem(Item item) {
         equippedItem = item;
+    }
+
+    public void eat(int hungerPoints) {
+        hunger -= hungerPoints;
     }
 
     public Item getEquippedItem() {
@@ -255,6 +275,18 @@ public abstract class Player extends Entity {
 
     public CombatHandler getCombH() {
         return combH;
+    }
+
+    public int getCurrentEnemy() {
+        return currentEnemy;
+    }
+
+    public float getWeight() {
+        return inventory.getWeight();
+    }
+
+    public float getMaxWeight() {
+        return inventory.getMaxWeight();
     }
 
     public int getMaxHunger() {

@@ -1,7 +1,8 @@
 package game.graphics;
 
-import game.CollisionChecker;
-import game.CombatHandler;
+import game.logic.Clock;
+import game.logic.CollisionChecker;
+import game.logic.CombatHandler;
 import game.Sound;
 import game.ambientes.Environment;
 import game.ambientes.EnvironmentManager;
@@ -40,6 +41,7 @@ public class GamePanel extends JPanel implements Runnable{
     public final int dialogueState = 3;
     public final int combatState = 4;
     public final int inventoryState = 5;
+    public final int gameOverState = 6;
 
     int FPS = 60;
 
@@ -50,6 +52,7 @@ public class GamePanel extends JPanel implements Runnable{
     private Sound music = new Sound();
     private Thread gameThread;
     private CollisionChecker cChecker = new CollisionChecker(this, envM);
+    private Clock clock = new Clock();
     private UI ui = new UI(this);
 
     // entities and items
@@ -104,6 +107,7 @@ public class GamePanel extends JPanel implements Runnable{
         if (gameState == playState) {
             envM.update(player, tileM);
             player.update();
+            clock.update();
 
             Environment currentEnv = envM.getCurrentEnv();
             for (Entity npc : currentEnv.getNPCs()) {
@@ -123,9 +127,11 @@ public class GamePanel extends JPanel implements Runnable{
     private void drawObjects(Graphics2D g2) {
         Environment currentEnv = envM.getCurrentEnv();
 
-        for (Item item : currentEnv.getItens()) {
-            if (item != null) {
-                item.draw(g2, this);
+        if (!(currentEnv == null)) {
+            for (Item item : currentEnv.getItens()) {
+                if (item != null) {
+                    item.draw(g2, this);
+                }
             }
         }
     }
@@ -133,9 +139,11 @@ public class GamePanel extends JPanel implements Runnable{
     private void drawNPC(Graphics2D g2) {
         Environment currentEnv = envM.getCurrentEnv();
 
-        for (Entity npc : currentEnv.getNPCs()) {
-            if (npc != null) {
-                npc.draw(g2);
+        if (!(currentEnv == null)) {
+            for (Entity npc : currentEnv.getNPCs()) {
+                if (npc != null) {
+                    npc.draw(g2);
+                }
             }
         }
     }
@@ -143,9 +151,11 @@ public class GamePanel extends JPanel implements Runnable{
     private void drawEnemies(Graphics2D g2) {
         Environment currentEnv = envM.getCurrentEnv();
 
-        for (Entity enemy : currentEnv.getEnemies()) {
-            if (enemy != null) {
-                enemy.draw(g2);
+        if (!(currentEnv == null)) {
+            for (Entity enemy : currentEnv.getEnemies()) {
+                if (enemy != null) {
+                    enemy.draw(g2);
+                }
             }
         }
     }
@@ -173,6 +183,9 @@ public class GamePanel extends JPanel implements Runnable{
             // PLAYER
             player.draw(g2);
 
+            // day time cycle
+            clock.draw(g2, this);
+
             // UI
             ui.draw(g2);
 
@@ -197,6 +210,14 @@ public class GamePanel extends JPanel implements Runnable{
 
     public CombatHandler getCombatHandler() {
         return player.getCombH();
+    }
+
+    public int getTime() {
+        return clock.getTime();
+    }
+
+    public int getDays() {
+        return clock.getDaysPassed();
     }
 
     public UI getUi() {

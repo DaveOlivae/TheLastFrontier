@@ -7,7 +7,7 @@ public abstract class Remedio extends Item {
     private String efeito;
 
     public Remedio(String nome, int peso, int durabilidade, String tipo, String efeito) {
-        super("aid", nome, peso, durabilidade, false);
+        super("consumable", nome, peso, durabilidade, false);
         this.tipo = tipo;
         this.efeito = efeito;
     }

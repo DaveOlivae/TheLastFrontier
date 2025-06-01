@@ -1,10 +1,10 @@
 package game.itens.weapons;
 
-public class Revolver extends Weapon {
-    private final int capacidade = 6;
-    private int municao = 6;
+public class Revolver extends Firearm {
 
     public Revolver() {
-        super("Revólver", 2, 20, "Arma de fogo", 40, 5);
+        super("Revolver", 2, 40, 6,40, 5, 6, 6);
+
+        setImage("/itens/revolver.png");
     }
 }

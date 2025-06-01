@@ -158,15 +158,58 @@ public class KeyHandler implements KeyListener {
     }
 
     private void combatState(int code) {
-        if (code == KeyEvent.VK_W) {
-            gp.getUi().setCommandNum(((gp.getUi().getCommandNum()) - 1), 2);
-        }
-        if (code == KeyEvent.VK_S) {
-            gp.getUi().setCommandNum(((gp.getUi().getCommandNum()) + 1), 2);
-        }
-        if (code == KeyEvent.VK_ENTER) {
-            if (gp.getUi().getCommandNum() == 2) {
-                gp.getCombatHandler().run(gp);
+        int combatScreenState = gp.getCombatHandler().getCombatScreenState();
+
+        if (combatScreenState == 0) {
+            // options state
+            if (code == KeyEvent.VK_W) {
+                gp.getUi().setCommandNum(((gp.getUi().getCommandNum()) - 1), 2);
+            }
+            if (code == KeyEvent.VK_S) {
+                gp.getUi().setCommandNum(((gp.getUi().getCommandNum()) + 1), 2);
+            }
+            if (code == KeyEvent.VK_ENTER) {
+                if (gp.getUi().getCommandNum() == 0) {
+                    gp.getCombatHandler().setCombatScreenState(1);
+                }
+                if (gp.getUi().getCommandNum() == 2) {
+                    gp.getCombatHandler().run();
+                }
+            }
+        } else if (combatScreenState == 1) {
+            // chose to shoot
+            if (code == KeyEvent.VK_W) {
+                gp.getUi().setCommandNum((gp.getUi().getCommandNum() - 1), 1);
+            }
+            if (code == KeyEvent.VK_S) {
+                gp.getUi().setCommandNum((gp.getUi().getCommandNum() + 1), 1);
+            }
+            if (code == KeyEvent.VK_ENTER) {
+                if (gp.getUi().getCommandNum() == 0) {
+                    gp.getCombatHandler().playerAttack();
+                }
+                if (gp.getUi().getCommandNum() == 1) {
+                    gp.getCombatHandler().setCombatScreenState(0);
+                }
+            }
+        } else if (combatScreenState == 2) {
+            // after player attack message state
+            if (code == KeyEvent.VK_ENTER) {
+                gp.getCombatHandler().targetAttack();
+            }
+        } else if (combatScreenState == 3) {
+            // after target attack
+            if (code == KeyEvent.VK_ENTER) {
+                gp.getCombatHandler().setCombatScreenState(0);
+            }
+        } else if (combatScreenState == 4) {
+            // end state
+            if (code == KeyEvent.VK_ENTER) {
+                // the way that this is implemented, the enemy will be removed whether the player or the enemy has died
+                // it doesnt really matter cuz the game will end if the player dies, so its ok if the enemy is removed
+                gp.getCombatHandler().removeEnemy();
+                gp.getCombatHandler().setCharsAtOrgPos();
+                gp.gameState = gp.playState;
             }
         }
     }
@@ -207,6 +250,10 @@ public class KeyHandler implements KeyListener {
                 gp.getUi().setCommandNum(((gp.getUi().getCommandNum()) + 1), 2);
             }
             if (code == KeyEvent.VK_ENTER) {
+                if (gp.getUi().getCommandNum() == 0) {
+                    gp.getPlayer().selectItem();
+                    gp.getUi().setInventoryScreenState(0);
+                }
                 if (gp.getUi().getCommandNum() == 2) {
                     gp.getUi().setInventoryScreenState(0);
                 }

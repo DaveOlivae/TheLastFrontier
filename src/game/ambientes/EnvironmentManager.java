@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class EnvironmentManager {
-    private String climaGlobal;
 
     private final int worldMapWidth = 21;
     private final int worldMapHeight = 21;

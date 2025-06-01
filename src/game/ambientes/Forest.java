@@ -5,6 +5,7 @@ import game.entity.npcs.NPC_OldMan;
 import game.graphics.GamePanel;
 import game.graphics.TileManager;
 import game.itens.food.*;
+import game.itens.weapons.Revolver;
 
 public class Forest extends Environment {
 
@@ -27,6 +28,7 @@ public class Forest extends Environment {
                 setEnvPath("/maps/forest1.csv");
                 addNPC(new NPC_OldMan(getGp()), 9 * tileSize, 8 * tileSize);
                 addEnemy(new EN_Raider(getGp()), 14 * tileSize, 15 * tileSize);
+                addItem(new Revolver(), 18 * tileSize, 25 * tileSize);
                 break;
             case 2:
                 setEnvPath("/maps/forest2.csv");

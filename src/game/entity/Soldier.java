@@ -22,5 +22,7 @@ public class Soldier extends Player {
 
     public void starterKit() {
         addItem(new Knife());
+
+        equipItem(itens().getFirst());
     }
 }

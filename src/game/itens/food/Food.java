@@ -1,5 +1,6 @@
 package game.itens.food;
 
+import game.entity.Player;
 import game.itens.Item;
 
 public abstract class Food extends Item {
@@ -16,6 +17,10 @@ public abstract class Food extends Item {
                 "Durability: " + getDurability() + "\n" +
                 "Restores: " + getHungerPoints() + "\n" +
                 "Expiration: " + getExpiration() + "\n");
+    }
+
+    public void eat(Player player) {
+        player.eat(hungerPoints);
     }
 
     public int getHungerPoints() {

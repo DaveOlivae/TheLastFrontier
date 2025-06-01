@@ -21,5 +21,7 @@ public class Survivor extends Player {
 
     public void starterKit() {
         addItem(new Knife());
+
+        equipItem(itens().getFirst());
     }
 }

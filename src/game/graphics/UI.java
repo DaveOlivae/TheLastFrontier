@@ -1,10 +1,12 @@
 package game.graphics;
 
-import game.CombatHandler;
+import game.logic.CombatHandler;
 import game.ambientes.Environment;
 import game.ambientes.EnvironmentManager;
 import game.entity.Player;
 import game.itens.Item;
+import game.itens.weapons.Firearm;
+import game.itens.weapons.Knife;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -50,6 +52,7 @@ public class UI {
             drawTitleScreen();
         }
         if (gp.gameState == gp.pauseState) {
+            drawStats();
             drawPauseScreen();
         }
         if (gp.gameState == gp.dialogueState) {
@@ -63,6 +66,41 @@ public class UI {
             drawStats();
             drawInventory();
         }
+        if (gp.gameState == gp.gameOverState) {
+            drawGameOverScreen();
+        }
+
+    }
+
+    private void drawGameOverScreen() {
+        Color c = new Color(0, 0, 0, 150);
+
+        g2.setColor(c);
+
+        g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
+
+        g2.setColor(Color.white);
+
+        String text = "Game Over";
+        int x = getXforCenteredText(text);
+        int y = gp.tileSize*3;
+        drawTextBold(text, x, y, 100);
+
+        text = "Retry";
+        x = getXforCenteredText(text);
+        y += gp.tileSize*4;
+        drawTextBold(text, x, y, 80);
+        if (commandNum == 0) {
+            g2.drawString(">", x - gp.tileSize, y);
+        }
+
+        text = "Quit";
+        x = getXforCenteredText(text);
+        y += gp.tileSize;
+        drawTextBold(text, x, y, 80);
+        if (commandNum == 0) {
+            g2.drawString(">", x - gp.tileSize, y);
+        }
     }
 
     private void drawInventory() {
@@ -70,6 +108,8 @@ public class UI {
         int y = gp.tileSize * 3;
         int width = gp.tileSize*5;
         int height = gp.tileSize*10;
+        int textSize = 40;
+        int space = 45;
 
         Player player = gp.getPlayer();
         List<Item> itens = player.itens();
@@ -85,26 +125,37 @@ public class UI {
 
         g2.drawImage(image, x, y, width, height, null);
 
-        x += gp.tileSize/2;
+        x += gp.tileSize/3;
         y += gp.tileSize;
         String text = "HP: " + player.getLife() + "/" + player.getMaxLife();
-        drawTextBold(text, x, y, 40);
+        drawTextBold(text, x, y, textSize);
 
-        y += 40;
+        y += space;
         text = "Hunger: " + player.getHunger() + "/" + player.getMaxHunger();
-        drawTextBold(text, x, y, 40);
+        drawTextBold(text, x, y, textSize);
 
-        y += 40;
+        y += space;
         text = "Thirst: " + player.getThirst() + "/" + player.getMaxThirst();
-        drawTextBold(text, x, y, 40);
+        drawTextBold(text, x, y, textSize);
 
-        y += 40;
+        y += space;
         text = "Energy: " + player.getEnergy() + "/" + player.getMaxEnergy();
-        drawTextBold(text, x, y, 40);
+        drawTextBold(text, x, y, textSize);
 
-        y += 40;
+        y += space;
         text = "Sanity: " + player.getSanity() + "/" + player.getMaxSanity();
-        drawTextBold(text, x, y, 40);
+        drawTextBold(text, x, y, textSize);
+
+        y += space;
+        text = "Weight: " + player.getWeight() + "/" + player.getMaxWeight();
+        drawTextBold(text, x, y, textSize);
+
+        y += space;
+        text = "Equipped\nItem:";
+        drawTextBold(text, x, y, textSize);
+
+        image = player.getEquippedItem().getImage();
+        g2.drawImage(image, x + gp.tileSize*3, y - 25, gp.tileSize, gp.tileSize, null);
 
         /* ------------- inventory box --------------- */
 
@@ -132,7 +183,7 @@ public class UI {
             slotX += (gp.tileSize + 24);
 
             if (i == 4 || i == 9 || i == 14 || i == 19) {
-                slotX = startX;
+                slotX = startX + 12;
                 slotY += (gp.tileSize + 24);
             }
         }
@@ -163,9 +214,29 @@ public class UI {
 
         g2.drawImage(image, x, y, 480, 248, null);
 
+        x += gp.tileSize/2;
+        y += 55;
+
         int itemIndex = getIndexOnSlot();
         if (itemIndex < itens.size()) {
-            drawText(itens.get(itemIndex).getDescription(), x + gp.tileSize/2, y + 55, 45);
+            text = itens.get(itemIndex).getDescription();
+
+            g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 45));
+
+            g2.setColor(Color.white);
+
+            // this is made so that the description of the itens fits in the description box
+            int counter = 0;
+            for (String line : text.split("\n")) {
+                g2.drawString(line, x, y);
+                y += 40;
+                counter++;
+                if (counter == 5) {
+                    y -= 200;
+                    x += gp.tileSize*5;
+                    counter = 0;
+                }
+            }
         }
 
         /* --------------- selecting an item ----------------------- */
@@ -180,10 +251,24 @@ public class UI {
             int stringX = boxX + gp.tileSize/2 + gp.tileSize/6;
             int stringY = boxY + 60;
 
-            text = "Equip";
-            drawText(text, stringX, stringY, 45);
-            if (commandNum == 0) {
-                g2.drawString(">", stringX - gp.tileSize/4, stringY);
+            if (itemType.equals("food")) {
+                text = "Eat";
+                drawText(text, stringX, stringY, 45);
+                if (commandNum == 0) {
+                    g2.drawString(">", stringX - gp.tileSize / 4, stringY);
+                }
+            } else if (itemType.equals("consumable")) {
+                text = "Use";
+                drawText(text, stringX, stringY, 45);
+                if (commandNum == 0) {
+                    g2.drawString(">", stringX - gp.tileSize / 4, stringY);
+                }
+            } else {
+                text = "Equip";
+                drawText(text, stringX, stringY, 45);
+                if (commandNum == 0) {
+                    g2.drawString(">", stringX - gp.tileSize / 4, stringY);
+                }
             }
 
             stringY += 50;
@@ -231,7 +316,7 @@ public class UI {
         String text = combH.getPlayer().getName();
 
         // player name
-        drawTextWithShadow(text, x + gp.tileSize/2, y + gp.tileSize, 45);
+        drawTextBold(text, x + gp.tileSize/2, y + gp.tileSize, 45);
 
         x = gp.tileSize*2 + gp.tileSize/2;
         y = gp.tileSize*2 + gp.tileSize/4;
@@ -245,7 +330,7 @@ public class UI {
 
         text = maxLife + "/" + life;
 
-        drawTextWithShadow(text, x + gp.tileSize/2, y + gp.tileSize, 45);
+        drawTextBold(text, x + gp.tileSize/2, y + gp.tileSize, 45);
 
         /* ---------- enemy stats ------------- */
         x = gp.tileSize*9;
@@ -253,7 +338,7 @@ public class UI {
         text = combH.getTarget().getName();
 
         // enemy name
-        drawTextWithShadow(text, x + gp.tileSize/2, y + gp.tileSize, 45);
+        drawTextBold(text, x + gp.tileSize/2, y + gp.tileSize, 45);
 
         x += gp.tileSize/2;
         y = gp.tileSize*2 + gp.tileSize/4;
@@ -267,44 +352,112 @@ public class UI {
 
         text = maxLife + "/" + life;
 
-        drawTextWithShadow(text, x + gp.tileSize/2, y + gp.tileSize, 45);
+        drawTextBold(text, x + gp.tileSize/2, y + gp.tileSize, 45);
 
-        /* ----------- status box -------------- */
         x = gp.tileSize/2;
         y = (gp.tileSize*9) + gp.tileSize/8;
 
-        drawTextBold(message, x + gp.tileSize/2, y + gp.tileSize, 45);
-
         /* ------------ options box -------------- */
-        x = (gp.tileSize*7);
+        if (combH.getCombatScreenState() == 0) {
 
-        x += gp.tileSize;
-        y += gp.tileSize;
-        text = "What do you wish to do?";
-        drawTextBold(text, x, y, 45);
+            // status message at the beginning of the turn "A raider appeared"
 
-        x += gp.tileSize;
-        y += gp.tileSize;
-        text = "Attack";
-        drawTextBold(text, x, y, 45);
-        if (commandNum == 0) {
-            g2.drawString(">", x - gp.tileSize/2, y);
+            drawTextBold(message, x + gp.tileSize/2, y + gp.tileSize, 45);
+
+            x = (gp.tileSize * 7);
+
+            x += gp.tileSize;
+            y += gp.tileSize;
+            text = "What do you wish to do?";
+            drawTextBold(text, x, y, 45);
+
+            x += gp.tileSize;
+            y += gp.tileSize;
+            text = "Attack";
+            drawTextBold(text, x, y, 45);
+            if (commandNum == 0) {
+                g2.drawString(">", x - gp.tileSize / 2, y);
+            }
+
+            text = "Run";
+            drawTextBold(text, x + 4 * gp.tileSize, y, 45);
+            if (commandNum == 2) {
+                g2.drawString(">", x + 3 * gp.tileSize + gp.tileSize / 2, y);
+            }
+
+            y += gp.tileSize;
+            text = "Item";
+            drawTextBold(text, x, y, 45);
+            if (commandNum == 1) {
+                g2.drawString(">", x - gp.tileSize / 2, y);
+            }
+        } else if (combH.getCombatScreenState() == 1) {
+            Item weapon = gp.getPlayer().getEquippedItem();
+
+            if (weapon instanceof Firearm gun) {
+                x = (gp.tileSize * 7);
+
+                x += gp.tileSize;
+                y += gp.tileSize;
+                text = "What do you wish to do?";
+                drawTextBold(text, x, y, 45);
+
+                x += gp.tileSize/2;
+                y += gp.tileSize;
+                text = "Shoot";
+                drawTextBold(text, x, y, 45);
+                if (commandNum == 0) {
+                    g2.drawString(">", x - gp.tileSize / 2, y);
+                }
+
+                g2.drawImage(gun.getImage(), x + gp.tileSize*5, y - gp.tileSize/2, gp.tileSize, gp.tileSize, null);
+
+                text = "Damage: " + gun.getDamage() + " pts";
+                drawText(text, x, y+gp.tileSize/2, 40);
+
+                text = gun.getLoad() + "/" + gun.getAmmo();
+                drawText(text, x + gp.tileSize*5, y+gp.tileSize, 40);
+
+                y += gp.tileSize + gp.tileSize/4;
+                text = "Back";
+                drawTextBold(text, x, y+gp.tileSize/4, 45);
+                if (commandNum == 1) {
+                    g2.drawString(">", x - gp.tileSize / 2, y+gp.tileSize/4);
+                }
+            } else if (weapon instanceof Knife knife) {
+                x = (gp.tileSize * 7);
+
+                x += gp.tileSize;
+                y += gp.tileSize;
+                text = "What do you wish to do?";
+                drawTextBold(text, x, y, 45);
+
+                x += gp.tileSize/2;
+                y += gp.tileSize;
+                text = "Shoot";
+                drawTextBold(text, x, y, 45);
+                if (commandNum == 0) {
+                    g2.drawString(">", x - gp.tileSize / 2, y);
+                }
+
+                g2.drawImage(knife.getImage(), x + gp.tileSize*5, y - gp.tileSize/2, gp.tileSize, gp.tileSize, null);
+
+                text = "Damage: " + knife.getDamage() + " pts";
+                drawText(text, x, y+gp.tileSize/2, 40);
+
+                y += gp.tileSize + gp.tileSize/4;
+                text = "Back";
+                drawTextBold(text, x, y+gp.tileSize/4, 45);
+                if (commandNum == 1) {
+                    g2.drawString(">", x - gp.tileSize / 2, y+gp.tileSize/4);
+                }
+            }
+        } else if (combH.getCombatScreenState() == 2 || combH.getCombatScreenState() == 3 || combH.getCombatScreenState() == 4) {
+
+            drawTextBold(message, x + gp.tileSize/2, y + gp.tileSize, 45);
         }
 
-        text = "Run";
-        drawTextBold(text, x + 4*gp.tileSize, y, 45);
-        if (commandNum == 2) {
-            g2.drawString(">", x + 3*gp.tileSize + gp.tileSize/2, y);
-        }
-
-        y += gp.tileSize;
-        text = "Item";
-        drawTextBold(text, x, y, 45);
-        if (commandNum == 1) {
-            g2.drawString(">", x - gp.tileSize/2, y);
-        }
-
-        combH.setScene(g2, gp);
+        combH.setScene(g2);
 
     }
 
@@ -325,17 +478,13 @@ public class UI {
         int x = gp.tileSize/2;
         int y = gp.tileSize*3/4;
 
-        g2.setColor(Color.darkGray);
-        g2.drawString(text, x + 5, y + 5);
-
         g2.setColor(Color.white);
         g2.drawString(text, x, y);
 
+        /* -------------------- PLAYER STATUS ------------------------- */
+
         text = "Hunger";
         y += gp.tileSize*5/8;
-
-        g2.setColor(Color.darkGray);
-        g2.drawString(text, x + 5, y + 5);
 
         g2.setColor(Color.white);
         g2.drawString(text, x, y);
@@ -343,63 +492,93 @@ public class UI {
         text = "Energy";
         y += gp.tileSize*5/8;
 
-        g2.setColor(Color.darkGray);
-        g2.drawString(text, x + 5, y + 5);
-
         g2.setColor(Color.white);
         g2.drawString(text, x, y);
 
-        drawPlayerLife(gp.tileSize*5/2, (gp.tileSize/2 - gp.tileSize/8));
-        drawPlayerHunger();
-        drawPlayerEnergy();
+        x += gp.tileSize*2;
+
+        y = gp.tileSize/2 - gp.tileSize/8;
+        drawPlayerLife(x, (gp.tileSize/2 - gp.tileSize/8));
+
+        y += (gp.tileSize/2 + gp.tileSize/6);
+        drawPlayerHunger(x, y);
+
+        y += (gp.tileSize/2 + gp.tileSize/6);
+        drawPlayerEnergy(x, y);
+
+        /* --------------------- TIME STATUS ------------------------ */
+
+        text = "Days: " + gp.getDays();
+        y = gp.tileSize*3/4;
+        x = gp.tileSize*7;
+
+        drawTextBold(text, x, y, 40);
+
+        y += gp.tileSize*5/8;
+
+        displayHours(x, y);
+    }
+
+    private void displayHours(int x, int y) {
+        int time = gp.getTime();
+
+        int hours = time / 100;
+        int minutes = (int) ((time % 100) * 60 / 100.0);
+
+        hours = hours % 24;
+
+        String text = String.format("%02d:%02d", hours, minutes);
+
+        drawTextBold(text, x, y, 40);
     }
 
     private void drawPlayerLife(int screenX, int screenY) {
-        BufferedImage image;
+        g2.setColor(Color.red);
+        int playerLife = gp.getPlayer().getLife();
 
-        try {
-            image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/hud/health_bar_full.png")));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        int numberOfBlocks = (22*playerLife)/100;
+
+        for (int i = 0; i < numberOfBlocks; i++) {
+            g2.fillRect(screenX, screenY, 8, 24);
+            screenX += 12;
         }
-
-        g2.drawImage(image, screenX, screenY, 4*gp.tileSize, gp.tileSize/2, null);
     }
 
     private void drawEnemyLife(int screenX, int screenY) {
-        BufferedImage image;
+        g2.setColor(Color.red);
+        int enemyIndex = gp.getPlayer().getCurrentEnemy();
+        int enemyLife = gp.getEnemy(enemyIndex).getLife();
 
-        try {
-            image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/hud/health_bar_full.png")));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        int numberOfBlocks = (22*enemyLife)/100;
+
+        for (int i = 0; i < numberOfBlocks; i++) {
+            g2.fillRect(screenX, screenY, 8, 24);
+            screenX += 12;
         }
-
-        g2.drawImage(image, screenX, screenY, 4*gp.tileSize, gp.tileSize/2, null);
     }
 
-    private void drawPlayerHunger() {
-        BufferedImage image;
+    private void drawPlayerHunger(int screenX, int screenY) {
+        g2.setColor(Color.green);
+        int playerLife = gp.getPlayer().getHunger();
 
-        try {
-            image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/hud/hunger_bar_full.png")));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        int numberOfBlocks = (22*playerLife)/100;
+
+        for (int i = 0; i < numberOfBlocks; i++) {
+            g2.fillRect(screenX, screenY, 8, 24);
+            screenX += 12;
         }
-
-        g2.drawImage(image, gp.tileSize*5/2, gp.tileSize + gp.tileSize/32, 4*gp.tileSize, gp.tileSize/2, null);
     }
 
-    private void drawPlayerEnergy() {
-        BufferedImage image;
+    private void drawPlayerEnergy(int screenX, int screenY) {
+        g2.setColor(Color.yellow);
+        int playerLife = gp.getPlayer().getEnergy();
 
-        try {
-            image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/hud/energy_bar_full.png")));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        int numberOfBlocks = (22*playerLife)/100;
+
+        for (int i = 0; i < numberOfBlocks; i++) {
+            g2.fillRect(screenX, screenY, 8, 24);
+            screenX += 12;
         }
-
-        g2.drawImage(image, gp.tileSize*5/2, gp.tileSize*3/2 + gp.tileSize/8 + gp.tileSize/16, 4*gp.tileSize, gp.tileSize/2, null);
     }
 
     private void drawTitleScreen() {
@@ -533,18 +712,6 @@ public class UI {
         }
     }
 
-    private void drawSubWindow(int x, int y, int width, int height) {
-
-        Color c = new Color(0, 0, 0);
-        g2.setColor(c);
-        g2.fillRoundRect(x, y, width, height, 35, 35);
-
-        c = new Color(255, 255, 255);
-        g2.setColor(c);
-        g2.setStroke(new BasicStroke(8));
-        g2.drawRoundRect(x+5, y+5, width-10, height-10, 25, 25);
-    }
-
     private void drawBox(String path, int x, int y, int width, int height) {
         BufferedImage image;
 
@@ -555,16 +722,6 @@ public class UI {
         }
 
         g2.drawImage(image, x, y, width, height, null);
-    }
-
-    private void drawTextWithShadow(String text, int x, int y, int size) {
-        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, size));
-
-        g2.setColor(Color.darkGray);
-        g2.drawString(text, x + 5, y + 5);
-
-        g2.setColor(Color.white);
-        g2.drawString(text, x, y);
     }
 
     private void drawTextBold(String text, int x, int y, int size) {

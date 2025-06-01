@@ -1,6 +1,6 @@
 package game.entity;
 
-import game.CollisionChecker;
+import game.logic.CollisionChecker;
 import game.graphics.GamePanel;
 import game.graphics.SpriteSheet;
 
@@ -64,6 +64,7 @@ public abstract class Entity {
         collisionOn = false;
         cChecker.checkTile(this);
         cChecker.checkObject(this, false);
+        cChecker.checkBorders(this);
         cChecker.checkPlayer(this);
 
         // if collision is false, entity can move
@@ -234,6 +235,14 @@ public abstract class Entity {
 
     public int getMaxLife() {
         return maxLife;
+    }
+
+    public void damage(int points) {
+        if ((life - points) <= 0) {
+            life = 0;
+        } else {
+            life -= points;
+        }
     }
 
     public void setMaxLife(int maxLife) {

@@ -7,7 +7,7 @@ public abstract class Weapon extends Item {
     private int damage;
     private int range;
 
-    public Weapon(String name, int weight, int durability, String type, int damage, int range) {
+    public Weapon(String name, float weight, int durability, String type, int damage, int range) {
         super("weapon", name, weight, durability, true);
         this.type = type;
         this.damage = damage;

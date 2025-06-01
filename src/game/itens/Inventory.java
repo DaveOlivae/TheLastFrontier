@@ -22,7 +22,6 @@ public class Inventory {
             itens.add(item);
 
             weight += item.getWeight();
-            slots++;
 
             return true;
         }
@@ -38,4 +37,11 @@ public class Inventory {
         return itens;
     }
 
+    public float getMaxWeight() {
+        return maxWeight;
+    }
+
+    public float getWeight() {
+        return weight;
+    }
 }

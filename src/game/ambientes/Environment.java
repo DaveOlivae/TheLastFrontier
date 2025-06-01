@@ -53,6 +53,10 @@ public abstract class Environment {
         enemies.add(enemy);
     }
 
+    public void removeEnemy(Entity enemy) {
+        enemies.remove(enemy);
+    }
+
     // gets e sets
 
     public Entity getEnemy(int index) {
@@ -81,10 +85,6 @@ public abstract class Environment {
 
     public String getName() {
         return this.name;
-    }
-
-    public String getEnvPath() {
-        return envPath;
     }
 
     public void setEnvPath(String envPath) {
