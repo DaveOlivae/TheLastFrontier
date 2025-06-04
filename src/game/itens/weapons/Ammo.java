@@ -14,7 +14,11 @@ public class Ammo extends Item {
 
         quantity = staterQuantity;
 
-        if (name.equals("pistol")) {
+        updateDescription();
+    }
+
+    public void updateDescription() {
+        if (getName().equals("pistol")) {
             setImage("/itens/bullet.png");
             setDescription("Pistol ammo\nQuantity: " + getQuantity());
         }

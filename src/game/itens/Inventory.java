@@ -93,6 +93,10 @@ public class Inventory {
         return null;
     }
 
+    public void removeItem(int index) {
+        itens.remove(index);
+    }
+
     public Item getItem(int index) {
         return itens.get(index);
     }

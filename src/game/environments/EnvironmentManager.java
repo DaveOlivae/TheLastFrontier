@@ -29,8 +29,8 @@ public class EnvironmentManager {
     }
 
     public void setInitialState() {
-        this.playerMapX = 10;
-        this.playerMapY = 18;
+        this.playerMapX = 17;
+        this.playerMapY = 19;
         this.worldMapNum = new String[worldMapWidth][worldMapHeight];
         this.historico = new Environment[worldMapWidth][worldMapHeight];
 
@@ -45,7 +45,7 @@ public class EnvironmentManager {
     public void loadMap() {
 
         try {
-            InputStream is = getClass().getResourceAsStream("/maps/worldmap.txt");
+            InputStream is = getClass().getResourceAsStream("/maps/worldmap.csv");
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
             int col = 0;
@@ -128,17 +128,9 @@ public class EnvironmentManager {
                     currentEnv = historico[playerMapX][playerMapY];
                 }
                 break;
-            case "lakeriver":
+            case "river":
                 if (historico[playerMapX][playerMapY] == null) {
                     currentEnv = new LakeRiver(tileM, gp, num);
-                    historico[playerMapX][playerMapY] = currentEnv;
-                } else {
-                    currentEnv = historico[playerMapX][playerMapY];
-                }
-                break;
-            case "cavern":
-                if (historico[playerMapX][playerMapY] == null) {
-                    currentEnv = new Cavern(tileM, gp, num);
                     historico[playerMapX][playerMapY] = currentEnv;
                 } else {
                     currentEnv = historico[playerMapX][playerMapY];
@@ -155,6 +147,22 @@ public class EnvironmentManager {
             case "city":
                 if (historico[playerMapX][playerMapY] == null) {
                     currentEnv = new City(tileM, gp, num);
+                    historico[playerMapX][playerMapY] = currentEnv;
+                } else {
+                    currentEnv = historico[playerMapX][playerMapY];
+                }
+                break;
+            case "plains":
+                if (historico[playerMapX][playerMapY] == null) {
+                    currentEnv = new Plains(tileM, gp, num);
+                    historico[playerMapX][playerMapY] = currentEnv;
+                } else {
+                    currentEnv = historico[playerMapX][playerMapY];
+                }
+                break;
+            case "desert":
+                if (historico[playerMapX][playerMapY] == null) {
+                    currentEnv = new Desert(tileM, gp, num);
                     historico[playerMapX][playerMapY] = currentEnv;
                 } else {
                     currentEnv = historico[playerMapX][playerMapY];

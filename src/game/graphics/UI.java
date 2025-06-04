@@ -230,17 +230,12 @@ public class UI {
 
         if (slotNotEmpty) {
 
+            itens.get(itemIndex).updateDescription();
+
             text = itens.get(itemIndex).getDescription();
 
             if (itens.get(itemIndex) instanceof Firearm gun) {
                 // all of this is to deal with the ammo
-
-                // i have to update the description of the guns, because there its displayed the current ammo of each gun
-                // the way the description works, is that the string is set in the class constructor, so its static,
-                // this works fine for most itens because the description just shows information, that doesnt change
-                // this is not the case for guns, since the ammo change throughout the game
-
-                gun.updateDescription();
 
                 String ammoType = gun.getFirearmType();
 
@@ -279,7 +274,7 @@ public class UI {
 
             if (inventoryScreenState == 1) {
 
-                if (itemType.equals("weapon") || itemType.equals("food")) {
+                if (itemType.equals("weapon") || itemType.equals("food") || itemType.equals("consumable")) {
                     inventoryScreenState = 2;
                 } else {
                     inventoryScreenState = 3;
@@ -297,16 +292,14 @@ public class UI {
 
                 if (itemType.equals("food")) {
                     text = "Eat";
-                    drawText(text, stringX, stringY, 45);
-                    if (commandNum == 0) {
-                        g2.drawString(">", stringX - gp.tileSize / 4, stringY);
-                    }
                 } else if (itemType.equals("weapon")) {
                     text = "Equip";
-                    drawText(text, stringX, stringY, 45);
-                    if (commandNum == 0) {
-                        g2.drawString(">", stringX - gp.tileSize / 4, stringY);
-                    }
+                } else {
+                    text = "Use";
+                }
+                drawText(text, stringX, stringY, 45);
+                if (commandNum == 0) {
+                    g2.drawString(">", stringX - gp.tileSize / 4, stringY);
                 }
 
                 stringY += 50;
@@ -584,7 +577,7 @@ public class UI {
         g2.setColor(Color.white);
         g2.drawString(text, x, y);
 
-        text = "Energy";
+        text = "Thirst";
         y += gp.tileSize*5/8;
 
         g2.setColor(Color.white);
@@ -599,7 +592,27 @@ public class UI {
         drawPlayerHunger(x, y);
 
         y += (gp.tileSize/2 + gp.tileSize/6);
+        drawPlayerThirst(x, y);
+
+        x = gp.tileSize*9 + gp.tileSize/8;
+        y = gp.tileSize*3/4;
+
+        text = "Energy";
+        g2.setColor(Color.white);
+        g2.drawString(text, x, y);
+
+        y += gp.tileSize*5/8;
+
+        text = "Sanity";
+        g2.setColor(Color.white);
+        g2.drawString(text, x, y);
+
+        x += gp.tileSize*2;
+        y = gp.tileSize/2 - gp.tileSize/8;
         drawPlayerEnergy(x, y);
+
+        y += (gp.tileSize/2 + gp.tileSize/6);
+        drawPlayerSanity(x, y);
 
         /* --------------------- TIME STATUS ------------------------ */
 
@@ -655,6 +668,30 @@ public class UI {
     private void drawPlayerHunger(int screenX, int screenY) {
         g2.setColor(Color.green);
         int playerLife = gp.getPlayer().getHunger();
+
+        int numberOfBlocks = (22*playerLife)/100;
+
+        for (int i = 0; i < numberOfBlocks; i++) {
+            g2.fillRect(screenX, screenY, 8, 24);
+            screenX += 12;
+        }
+    }
+
+    private void drawPlayerThirst(int screenX, int screenY) {
+        g2.setColor(Color.blue);
+        int playerLife = gp.getPlayer().getThirst();
+
+        int numberOfBlocks = (22*playerLife)/100;
+
+        for (int i = 0; i < numberOfBlocks; i++) {
+            g2.fillRect(screenX, screenY, 8, 24);
+            screenX += 12;
+        }
+    }
+
+    private void drawPlayerSanity(int screenX, int screenY) {
+        g2.setColor(Color.green);
+        int playerLife = gp.getPlayer().getSanity();
 
         int numberOfBlocks = (22*playerLife)/100;
 

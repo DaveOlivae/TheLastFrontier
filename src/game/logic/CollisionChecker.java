@@ -383,7 +383,7 @@ public class CollisionChecker {
                 break;
             case "down":
                 entitySolidArea.y += entitySpeed;
-                if (entitySolidArea.y > gp.envHeight - gp.tileSize) {
+                if (entitySolidArea.y > gp.envHeight - 2*gp.tileSize) {
                     entity.setCollisionOn(true);
                 }
                 break;

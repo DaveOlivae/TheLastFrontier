@@ -12,13 +12,7 @@ public class Firearm extends Weapon {
         this.load = load;
         this.firearmType = firearmType;
 
-        setDescription("Name: " + getName() + "\n" +
-                "Weight: " + getWeight() + "\n" +
-                "Durability: " + getDurability() + "\n" +
-                "Damage: " + getDamage() + "\n" +
-                "Range: " + getRange() + "\n" +
-                "Ammo: " + "\n" +
-                getLoad() + "/");
+        updateDescription();
     }
 
     public void updateDescription() {

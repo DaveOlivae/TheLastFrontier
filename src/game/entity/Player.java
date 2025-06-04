@@ -1,5 +1,8 @@
 package game.entity;
 
+import game.events.Event;
+import game.events.EventManager;
+import game.events.eventoDoencaFerimento.SicknessInjuryEvent;
 import game.itens.materiais.Wood;
 import game.itens.weapons.Ammo;
 import game.itens.weapons.Firearm;
@@ -10,6 +13,7 @@ import game.itens.*;
 import game.itens.food.Food;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Player extends Entity {
@@ -22,6 +26,8 @@ public abstract class Player extends Entity {
 
     private Inventory inventory;
     private Item equippedItem;
+
+    private List<SicknessInjuryEvent> conditions;
 
     private int currentEnemy;
 
@@ -71,6 +77,8 @@ public abstract class Player extends Entity {
         this.maxSanity = maxSanity;
         this.sanity = maxSanity;
 
+        this.conditions = new ArrayList<>();
+
         this.inventory = new Inventory(maxWeight);
 
         starterKit();
@@ -99,7 +107,7 @@ public abstract class Player extends Entity {
             setCollisionOn(false);
             gp.getcChecker().checkTile(this);
 
-            // find resources
+            // interact with special tiles
             int resourceIndex = gp.getcChecker().collectResource(this);
             collectResource(resourceIndex);
 
@@ -157,8 +165,11 @@ public abstract class Player extends Entity {
         } else {
             setSpriteNum(1);
             int npcIndex = gp.getcChecker().checkEntity(this, gp.getNPCs());
-
             interactNPC(npcIndex);
+
+            // interact with special tiles
+            int resourceIndex = gp.getcChecker().collectResource(this);
+            collectResource(resourceIndex);
         }
 
         /* ---------------- UPDATE PLAYER STATS -------------------- */
@@ -169,10 +180,19 @@ public abstract class Player extends Entity {
 
         if ((gp.getClock().getTime() % 200) == 0) {
             hunger += 1;
+            thirst += 3;
         }
 
-        if (gp.getClock().getTime() > 1800 & gp.getClock().getTime() % 100 == 0) {
+        if (gp.getClock().getTime() > 18000 & gp.getClock().getTime() % 100 == 0) {
             energy -= 1;
+        }
+
+        if (hunger >= 100) {
+            gp.gameState = gp.gameOverState;
+        }
+
+        if (thirst >= 100) {
+            gp.gameState = gp.gameOverState;
         }
 
     }
@@ -183,7 +203,19 @@ public abstract class Player extends Entity {
         if (index != 999) {
             Item item = itens.get(index);
 
-            if (inventory.addItem(item)) {
+            if (item instanceof Ammo ammo) {
+                Ammo playerAmmo = inventory.getAmmo(ammo.getName());
+
+                if (playerAmmo != null) {
+                    playerAmmo.setQuantity(playerAmmo.getQuantity() + ammo.getQuantity());
+                    itens.remove(index);
+                } else {
+                    if (inventory.addItem(ammo)) {
+                        itens.remove(index);
+                    }
+                }
+
+            } else if (inventory.addItem(item)) {
                 itens.remove(index);
             }
         }
@@ -192,8 +224,22 @@ public abstract class Player extends Entity {
     public void collectResource(int index) {
         if (gp.getKeyH().ePressed && index != 999) {
             gp.gameState = gp.dialogueState;
-            gp.getUi().setCurrentDialogue("You found wood");
-            addItem(new Wood());
+
+            if (index == 60 || index == 61 || index == 158) {
+                // player collects water
+                Canteen canteen = getCanteen();
+
+                if (canteen != null) {
+                    canteen.addWater();
+                    gp.getUi().setCurrentDialogue("You've collected water");
+                } else {
+                    gp.getUi().setCurrentDialogue("You don't have a canteen");
+                }
+            }
+
+            if (index == 214 || index == 215 || index == 216 || index == 217) {
+                sleep();
+            }
         }
     }
 
@@ -258,6 +304,19 @@ public abstract class Player extends Entity {
         g2.drawImage(getImage(), x, y, gp.tileSize, gp.tileSize, null);
     }
 
+    public void sleep() {
+        if (gp.getClock().getTime() >= 18000) {
+            gp.getClock().setTime(0);
+            gp.getClock().dayPassed();
+            gp.getUi().setCurrentDialogue("You wake up feeling well\nrested.");
+
+            energy = maxEnergy;
+            setLife(getMaxLife());
+        } else {
+            gp.getUi().setCurrentDialogue("You can only sleep\nat night.");
+        }
+    }
+
     public void selectItem() {
         int itemIndex = gp.getUi().getIndexOnSlot();
 
@@ -273,9 +332,24 @@ public abstract class Player extends Entity {
                 }
             } else if (item.getType().equals("food")) {
                 Food food = (Food) item;
-                food.eat(this);
-                itens().remove(food);
+                eat(food.getHungerPoints());
+
+                food.setAmount(food.getAmount() - 1);
+
+                if (food.getAmount() <= 0) {
+                    itens().remove(food);
+                }
+            } else if (item instanceof Canteen canteen) {
+                canteen.drinkWater(this);
             }
+        }
+    }
+
+    public void removeItem() {
+        int itemIndex = gp.getUi().getIndexOnSlot();
+
+        if (itemIndex < inventory.getItens().size()) {
+            inventory.removeItem(itemIndex);
         }
     }
 
@@ -285,6 +359,16 @@ public abstract class Player extends Entity {
 
     public void eat(int hungerPoints) {
         hunger -= hungerPoints;
+        if (hunger <= 0) {
+            hunger = 0;
+        }
+    }
+
+    public void drink(int thirstPoints) {
+        thirst -= thirstPoints;
+        if (thirst <= 0) {
+            thirst = 0;
+        }
     }
 
     public Item getEquippedItem() {
@@ -297,6 +381,19 @@ public abstract class Player extends Entity {
 
     public Ammo getPlayerAmmo(String ammoType) {
         return inventory.getAmmo(ammoType);
+    }
+
+    private Canteen getCanteen() {
+        Canteen canteen;
+
+        for (Item item : itens()) {
+            if (item instanceof Canteen) {
+                canteen = (Canteen) item;
+                return canteen;
+            }
+        }
+
+        return null;
     }
 
     public void reloadGun(Firearm gun) {
@@ -325,6 +422,24 @@ public abstract class Player extends Entity {
         return inventory.getWeight();
     }
 
+    public List<SicknessInjuryEvent> getConditions() {
+        return conditions;
+    }
+
+    public boolean searchCondition(SicknessInjuryEvent e) {
+        for (SicknessInjuryEvent condition : conditions) {
+            if (condition.getName().equals(e.getName())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void addCondition(SicknessInjuryEvent condition) {
+        conditions.add(condition);
+    }
+
     public double getMaxWeight() {
         return inventory.getMaxWeight();
     }
@@ -337,6 +452,10 @@ public abstract class Player extends Entity {
         return hunger;
     }
 
+    public void setThirst(int thirst) {
+        this.thirst = thirst;
+    }
+
     public int getMaxThirst() {
         return maxThirst;
     }
@@ -347,6 +466,10 @@ public abstract class Player extends Entity {
 
     public int getMaxEnergy() {
         return maxEnergy;
+    }
+
+    public void setEnergy(int energy) {
+        this.energy = energy;
     }
 
     public int getEnergy() {

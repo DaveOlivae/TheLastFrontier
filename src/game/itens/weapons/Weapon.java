@@ -13,12 +13,16 @@ public abstract class Weapon extends Item {
         this.damage = damage;
         this.range = range;
 
+        updateDescription();
+    }
+
+    @Override
+    public void updateDescription() {
         setDescription("Name: " + getName() + "\n" +
                 "Weight: " + getWeight() + "\n" +
                 "Durability: " + getDurability() + "\n" +
                 "Damage: " + getDamage() + "\n" +
                 "Range: " + getRange() + "\n");
-
     }
 
     public int getDamage() {

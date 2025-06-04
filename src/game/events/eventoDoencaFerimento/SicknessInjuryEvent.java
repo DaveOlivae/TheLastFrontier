@@ -1,17 +1,13 @@
 package game.events.eventoDoencaFerimento;
 
 import game.events.Event;
+import game.graphics.GamePanel;
 
 public abstract class SicknessInjuryEvent extends Event {
-    private String tipoCondicao;
-    private String impacto;
-    private String curaDisponivel;
 
-    public SicknessInjuryEvent(String nome, String descricao, String tipoCondicao,
-                               String impacto, String curaDisponivel) {
-        super(nome, descricao, 0.1);
-        this.tipoCondicao = tipoCondicao;
-        this.impacto = impacto;
-        this.curaDisponivel = curaDisponivel;
+    public SicknessInjuryEvent(String name, String message, double probability) {
+        super(name, message, probability);
     }
+
+    public abstract void update(GamePanel gp);
 }

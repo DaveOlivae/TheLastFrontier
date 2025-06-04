@@ -333,6 +333,10 @@ public class KeyHandler implements KeyListener {
                     gp.getPlayer().selectItem();
                     gp.getUi().setInventoryScreenState(0);
                 }
+                if (gp.getUi().getCommandNum() == 1) {
+                    gp.getPlayer().removeItem();
+                    gp.getUi().setInventoryScreenState(0);
+                }
                 if (gp.getUi().getCommandNum() == 2) {
                     gp.getUi().setInventoryScreenState(0);
                 }
@@ -346,8 +350,11 @@ public class KeyHandler implements KeyListener {
                 gp.getUi().setCommandNum(((gp.getUi().getCommandNum()) + 1), 1);
             }
             if (code == KeyEvent.VK_ENTER) {
+                if (gp.getUi().getCommandNum() == 0) {
+                    gp.getPlayer().removeItem();
+                    gp.getUi().setInventoryScreenState(0);
+                }
                 if (gp.getUi().getCommandNum() == 1) {
-                    gp.getPlayer().selectItem();
                     gp.getUi().setInventoryScreenState(0);
                 }
                 gp.getUi().setCommandNum(0, 1);

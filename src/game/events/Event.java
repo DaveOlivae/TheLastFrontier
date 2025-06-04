@@ -22,5 +22,9 @@ public abstract class Event {
     public double getProbability() {
         return probability;
     }
+
+    public String getName() {
+        return name;
+    }
 }
 

@@ -36,6 +36,8 @@ public abstract class Item {
         this.equipable = equipable;
     }
 
+    public abstract void updateDescription();
+
     public void draw(Graphics2D g2, GamePanel gp) {
         Player player = gp.getPlayer();
         int playerEnvX = player.getEnvX();

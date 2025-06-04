@@ -74,6 +74,14 @@ public class Clock {
         g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
     }
 
+    public void dayPassed() {
+        daysPassed++;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
+    }
+
     public int getTime() {
         return time;
     }

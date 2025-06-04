@@ -57,7 +57,13 @@ public class TileManager {
         for (int i = 0; i <= 46; i += 30) {
             for (int j = 7; j <= 16; j++) {
                 this.tile.get(i + j).collision = true;
-                this.tile.get(i + j).collectable = true;
+            }
+        }
+
+
+        for (int i = 47; i <= 197; i += 30) {
+            for (int j = 0; j <= 12; j++) {
+                this.tile.get(i + j).collision = true;
             }
         }
 
@@ -67,31 +73,48 @@ public class TileManager {
             }
         }
 
+        for (int i = 180; i <= 196; i++) {
+            this.tile.get(i).collision = true;
+        }
+
+        this.tile.get(60).collision = true;
+        this.tile.get(61).collision = true;
         this.tile.get(68).collision = true;
         this.tile.get(69).collision = true;
         this.tile.get(71).collision = true;
         this.tile.get(72).collision = true;
         this.tile.get(75).collision = true;
         this.tile.get(76).collision = true;
+        this.tile.get(100).collision = true;
         this.tile.get(101).collision = true;
         this.tile.get(102).collision = true;
+        this.tile.get(103).collision = true;
+        this.tile.get(104).collision = true;
+        this.tile.get(133).collision = true;
+        this.tile.get(134).collision = true;
+        this.tile.get(135).collision = true;
+        this.tile.get(136).collision = true;
+        this.tile.get(158).collision = true;
+        this.tile.get(162).collision = true;
+        this.tile.get(165).collision = true;
+        this.tile.get(166).collision = true;
+        this.tile.get(232).collision = true;
+        this.tile.get(235).collision = true;
+        this.tile.get(236).collision = true;
+        this.tile.get(237).collision = true;
+        this.tile.get(238).collision = true;
+        this.tile.get(239).collision = true;
 
-        /* setting collectability for trees */
+        /* setting collectability */
+        this.tile.get(60).collectable = true;
+        this.tile.get(61).collectable = true;
+        this.tile.get(158).collectable = true;
 
-        this.tile.get(67).collectable = true;
-        this.tile.get(68).collectable = true;
-        this.tile.get(69).collectable = true;
-        this.tile.get(70).collectable = true;
-        this.tile.get(71).collectable = true;
-        this.tile.get(72).collectable = true;
-        this.tile.get(73).collectable = true;
-        this.tile.get(74).collectable = true;
-        this.tile.get(75).collectable = true;
-        this.tile.get(76).collectable = true;
-        this.tile.get(101).collectable = true;
-        this.tile.get(102).collectable = true;
-        this.tile.get(105).collectable = true;
-        this.tile.get(106).collectable = true;
+        for (int i = 210; i <= 217; i++) {
+            this.tile.get(i).collision = true;
+            this.tile.get(i).collectable = true;
+        }
+
     }
 
 
