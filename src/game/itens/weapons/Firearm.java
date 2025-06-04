@@ -1,16 +1,16 @@
 package game.itens.weapons;
 
 public class Firearm extends Weapon {
-    public int capacity;
-    public int ammo;
-    public int load;
+    private int capacity;
+    private int load;
+    private String firearmType;
 
-    public Firearm(String name, float weight, int durability, int capacity, int damage, int range, int ammo, int load) {
+    public Firearm(String name, float weight, int durability, int capacity, int damage, int range, int load, String firearmType) {
         super(name, weight, durability, "firearm", damage, range);
 
         this.capacity = capacity;
-        this.ammo = ammo;
         this.load = load;
+        this.firearmType = firearmType;
 
         setDescription("Name: " + getName() + "\n" +
                 "Weight: " + getWeight() + "\n" +
@@ -18,14 +18,36 @@ public class Firearm extends Weapon {
                 "Damage: " + getDamage() + "\n" +
                 "Range: " + getRange() + "\n" +
                 "Ammo: " + "\n" +
-                getLoad() + "/" + getAmmo() + "\n");
+                getLoad() + "/");
+    }
+
+    public void updateDescription() {
+        setDescription("Name: " + getName() + "\n" +
+                "Weight: " + getWeight() + "\n" +
+                "Durability: " + getDurability() + "\n" +
+                "Damage: " + getDamage() + "\n" +
+                "Range: " + getRange() + "\n" +
+                "Ammo: " + "\n" +
+                getLoad() + "/");
+    }
+
+    public String getFirearmType() {
+        return firearmType;
+    }
+
+    public void loadGun(int points) {
+        load = points;
+    }
+
+    public void shotGun() {
+        load--;
     }
 
     public int getLoad() {
         return load;
     }
 
-    public int getAmmo() {
-        return ammo;
+    public int getCapacity() {
+        return capacity;
     }
 }

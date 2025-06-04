@@ -1,8 +1,8 @@
 package game.graphics;
 
 import game.logic.CombatHandler;
-import game.ambientes.Environment;
-import game.ambientes.EnvironmentManager;
+import game.environments.Environment;
+import game.environments.EnvironmentManager;
 import game.entity.Player;
 import game.itens.Item;
 import game.itens.weapons.Firearm;
@@ -25,6 +25,7 @@ public class UI {
     private int titleScreenState = 0;
     private int inventoryScreenState = 0;
     private int slotCol, slotRow;
+    private boolean slotNotEmpty;
 
     public UI(GamePanel gp) {
         this.gp = gp;
@@ -73,7 +74,7 @@ public class UI {
     }
 
     private void drawGameOverScreen() {
-        Color c = new Color(0, 0, 0, 150);
+        Color c = new Color(0, 0, 0);
 
         g2.setColor(c);
 
@@ -89,7 +90,7 @@ public class UI {
         text = "Retry";
         x = getXforCenteredText(text);
         y += gp.tileSize*4;
-        drawTextBold(text, x, y, 80);
+        drawText(text, x, y, 80);
         if (commandNum == 0) {
             g2.drawString(">", x - gp.tileSize, y);
         }
@@ -97,26 +98,20 @@ public class UI {
         text = "Quit";
         x = getXforCenteredText(text);
         y += gp.tileSize;
-        drawTextBold(text, x, y, 80);
-        if (commandNum == 0) {
+        drawText(text, x, y, 80);
+        if (commandNum == 1) {
             g2.drawString(">", x - gp.tileSize, y);
         }
     }
 
-    private void drawInventory() {
-        int x = gp.tileSize;
-        int y = gp.tileSize * 3;
+    private void drawAttributesBox(int x, int y, Player player) {
+        int space = 45;
+        int textSize = 40;
         int width = gp.tileSize*5;
         int height = gp.tileSize*10;
-        int textSize = 40;
-        int space = 45;
-
-        Player player = gp.getPlayer();
-        List<Item> itens = player.itens();
 
         BufferedImage image;
 
-        /* ------------- attributes box --------------- */
         try {
             image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/hud/stats_box.png")));
         } catch (IOException e) {
@@ -147,7 +142,7 @@ public class UI {
         drawTextBold(text, x, y, textSize);
 
         y += space;
-        text = "Weight: " + player.getWeight() + "/" + player.getMaxWeight();
+        text =  "Weight: " + String.format("%.2f", player.getWeight()) + "/" + String.format("%.2f", player.getMaxWeight());
         drawTextBold(text, x, y, textSize);
 
         y += space;
@@ -156,11 +151,13 @@ public class UI {
 
         image = player.getEquippedItem().getImage();
         g2.drawImage(image, x + gp.tileSize*3, y - 25, gp.tileSize, gp.tileSize, null);
+    }
 
-        /* ------------- inventory box --------------- */
+    private void drawItemsBox(int x, int y, Player player) {
+        BufferedImage image;
+        String text;
 
-        x = gp.tileSize*8;
-        y = gp.tileSize*3;
+        List<Item> itens = player.itens();
 
         try {
             image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/hud/inventory_box.png")));
@@ -179,6 +176,16 @@ public class UI {
 
         for (int i = 0; i < itens.size(); i++) {
             g2.drawImage(itens.get(i).getImage(), slotX, slotY, gp.tileSize, gp.tileSize, null);
+
+            // DISPLAY AMOUNT
+
+            if (itens.get(i).getAmount() > 1) {
+                String s = "" + itens.get(i).getAmount();
+                int amountX = slotX + gp.tileSize;
+                int amountY = slotY + gp.tileSize;
+
+                drawText(s, amountX, amountY, 32);
+            }
 
             slotX += (gp.tileSize + 24);
 
@@ -218,8 +225,32 @@ public class UI {
         y += 55;
 
         int itemIndex = getIndexOnSlot();
-        if (itemIndex < itens.size()) {
+
+        slotNotEmpty = itemIndex < itens.size();
+
+        if (slotNotEmpty) {
+
             text = itens.get(itemIndex).getDescription();
+
+            if (itens.get(itemIndex) instanceof Firearm gun) {
+                // all of this is to deal with the ammo
+
+                // i have to update the description of the guns, because there its displayed the current ammo of each gun
+                // the way the description works, is that the string is set in the class constructor, so its static,
+                // this works fine for most itens because the description just shows information, that doesnt change
+                // this is not the case for guns, since the ammo change throughout the game
+
+                gun.updateDescription();
+
+                String ammoType = gun.getFirearmType();
+
+                if (player.getPlayerAmmo(ammoType) == null) {
+                    text = itens.get(itemIndex).getDescription() + "0";
+                } else {
+                    int quantity = player.getPlayerAmmo(ammoType).getQuantity();
+                    text = itens.get(itemIndex).getDescription() + quantity;
+                }
+            }
 
             g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 45));
 
@@ -241,50 +272,103 @@ public class UI {
 
         /* --------------- selecting an item ----------------------- */
 
-        if (inventoryScreenState == 1 && itemIndex < itens.size()) {
+
+        if (itemIndex < itens.size()) {
+
             String itemType = itens.get(itemIndex).getType();
-            int boxX = selX + gp.tileSize/2;
-            int boxY = selY + gp.tileSize/2;
 
-            drawBox("/hud/options_box.png", boxX, boxY, gp.tileSize*3, gp.tileSize*3);
+            if (inventoryScreenState == 1) {
 
-            int stringX = boxX + gp.tileSize/2 + gp.tileSize/6;
-            int stringY = boxY + 60;
+                if (itemType.equals("weapon") || itemType.equals("food")) {
+                    inventoryScreenState = 2;
+                } else {
+                    inventoryScreenState = 3;
+                }
+            }
 
-            if (itemType.equals("food")) {
-                text = "Eat";
+            if (inventoryScreenState == 2) {
+                int boxX = selX + gp.tileSize / 2;
+                int boxY = selY + gp.tileSize / 2;
+
+                drawBox("/hud/options_box.png", boxX, boxY, gp.tileSize * 3, gp.tileSize * 3);
+
+                int stringX = boxX + gp.tileSize / 2 + gp.tileSize / 6;
+                int stringY = boxY + 60;
+
+                if (itemType.equals("food")) {
+                    text = "Eat";
+                    drawText(text, stringX, stringY, 45);
+                    if (commandNum == 0) {
+                        g2.drawString(">", stringX - gp.tileSize / 4, stringY);
+                    }
+                } else if (itemType.equals("weapon")) {
+                    text = "Equip";
+                    drawText(text, stringX, stringY, 45);
+                    if (commandNum == 0) {
+                        g2.drawString(">", stringX - gp.tileSize / 4, stringY);
+                    }
+                }
+
+                stringY += 50;
+                text = "Remove";
                 drawText(text, stringX, stringY, 45);
-                if (commandNum == 0) {
+                if (commandNum == 1) {
                     g2.drawString(">", stringX - gp.tileSize / 4, stringY);
                 }
-            } else if (itemType.equals("consumable")) {
-                text = "Use";
+
+                stringY += 50;
+                text = "Cancel";
                 drawText(text, stringX, stringY, 45);
-                if (commandNum == 0) {
-                    g2.drawString(">", stringX - gp.tileSize / 4, stringY);
-                }
-            } else {
-                text = "Equip";
-                drawText(text, stringX, stringY, 45);
-                if (commandNum == 0) {
+                if (commandNum == 2) {
                     g2.drawString(">", stringX - gp.tileSize / 4, stringY);
                 }
             }
 
-            stringY += 50;
-            text = "Remove";
-            drawText(text, stringX, stringY, 45);
-            if (commandNum == 1) {
-                g2.drawString(">", stringX - gp.tileSize/4, stringY);
-            }
+            if (inventoryScreenState == 3) {
+                int boxX = selX + gp.tileSize / 2;
+                int boxY = selY + gp.tileSize / 2;
 
-            stringY += 50;
-            text = "Cancel";
-            drawText(text, stringX, stringY, 45);
-            if (commandNum == 2) {
-                g2.drawString(">", stringX - gp.tileSize/4, stringY);
+                drawBox("/hud/options_box.png", boxX, boxY, gp.tileSize * 3, gp.tileSize * 3);
+
+                int stringX = boxX + gp.tileSize / 2 + gp.tileSize / 6;
+                int stringY = boxY + 60;
+
+                text = "Remove";
+                drawText(text, stringX, stringY, 45);
+                if (commandNum == 0) {
+                    g2.drawString(">", stringX - gp.tileSize / 4, stringY);
+                }
+
+                stringY += 50;
+                text = "Cancel";
+                drawText(text, stringX, stringY, 45);
+                if (commandNum == 1) {
+                    g2.drawString(">", stringX - gp.tileSize / 4, stringY);
+                }
             }
         }
+    }
+
+    private void drawInventory() {
+         /* i decided to separate the inventory in 2 boxes, the attributes box and the items box (with the item
+         * description box) i did this because im gonna use the items box elsewhere, and i dont need the attributes box
+         * everytime, only when the player is check its inventory
+         * */
+
+        int x = gp.tileSize;
+        int y = gp.tileSize * 3;
+
+        Player player = gp.getPlayer();
+
+        /* ------------- attributes box --------------- */
+
+        drawAttributesBox(x, y, player);
+
+        /* ------------- inventory box --------------- */
+
+        x = gp.tileSize*8;
+
+        drawItemsBox(x, y, player);
     }
 
     private void drawCombatScreen() {
@@ -404,7 +488,13 @@ public class UI {
 
                 x += gp.tileSize/2;
                 y += gp.tileSize;
-                text = "Shoot";
+
+                if (gun.getLoad() == 0) {
+                    text = "Reload";
+                } else {
+                    text = "Shoot";
+                }
+
                 drawTextBold(text, x, y, 45);
                 if (commandNum == 0) {
                     g2.drawString(">", x - gp.tileSize / 2, y);
@@ -415,7 +505,7 @@ public class UI {
                 text = "Damage: " + gun.getDamage() + " pts";
                 drawText(text, x, y+gp.tileSize/2, 40);
 
-                text = gun.getLoad() + "/" + gun.getAmmo();
+                text = gun.getLoad() + "/" + gp.getPlayer().getPlayerAmmo(gun.getFirearmType()).getQuantity();
                 drawText(text, x + gp.tileSize*5, y+gp.tileSize, 40);
 
                 y += gp.tileSize + gp.tileSize/4;
@@ -434,7 +524,7 @@ public class UI {
 
                 x += gp.tileSize/2;
                 y += gp.tileSize;
-                text = "Shoot";
+                text = "Stab";
                 drawTextBold(text, x, y, 45);
                 if (commandNum == 0) {
                     g2.drawString(">", x - gp.tileSize / 2, y);
@@ -459,6 +549,11 @@ public class UI {
 
         combH.setScene(g2);
 
+        if (combH.getCombatScreenState() == 10) {
+            x = gp.tileSize*8;
+            y = gp.tileSize*3;
+            drawItemsBox(x, y, gp.getPlayer());
+        }
     }
 
     private void drawStats() {
@@ -522,8 +617,8 @@ public class UI {
     private void displayHours(int x, int y) {
         int time = gp.getTime();
 
-        int hours = time / 100;
-        int minutes = (int) ((time % 100) * 60 / 100.0);
+        int hours = time / 1000;
+        int minutes = (int) ((time % 1000) * 60 / 1000.0);
 
         hours = hours % 24;
 
@@ -702,14 +797,10 @@ public class UI {
         drawBox("/hud/dialogue_box.png",x, y, width, height);
 
         // this is to define where the text is going to be displayed on the window
-        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 35));
         x += gp.tileSize;
         y += gp.tileSize;
 
-        for (String line : currentDialogue.split("\n")) {
-            g2.drawString(line, x, y);
-            y += 40;
-        }
+        drawText(currentDialogue, x, y, 40);
     }
 
     private void drawBox(String path, int x, int y, int width, int height) {
@@ -754,6 +845,10 @@ public class UI {
     public int getIndexOnSlot() {
         int itemIndex = slotCol + (slotRow*5);
         return itemIndex;
+    }
+
+    public boolean isSlotNotEmpty() {
+        return slotNotEmpty;
     }
 
     public void setTitleScreenState(int titleScreenState) {

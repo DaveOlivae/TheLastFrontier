@@ -1,5 +1,8 @@
 package game.entity;
 
+import game.itens.materiais.Wood;
+import game.itens.weapons.Ammo;
+import game.itens.weapons.Firearm;
 import game.logic.CombatHandler;
 import game.graphics.GamePanel;
 import game.input.KeyHandler;
@@ -96,6 +99,10 @@ public abstract class Player extends Entity {
             setCollisionOn(false);
             gp.getcChecker().checkTile(this);
 
+            // find resources
+            int resourceIndex = gp.getcChecker().collectResource(this);
+            collectResource(resourceIndex);
+
             // object collision
             int objIndex = gp.getcChecker().checkObject(this, true);
 
@@ -160,6 +167,14 @@ public abstract class Player extends Entity {
             gp.gameState = gp.gameOverState;
         }
 
+        if ((gp.getClock().getTime() % 200) == 0) {
+            hunger += 1;
+        }
+
+        if (gp.getClock().getTime() > 1800 & gp.getClock().getTime() % 100 == 0) {
+            energy -= 1;
+        }
+
     }
 
     public void pickupItem(int index) {
@@ -171,6 +186,14 @@ public abstract class Player extends Entity {
             if (inventory.addItem(item)) {
                 itens.remove(index);
             }
+        }
+    }
+
+    public void collectResource(int index) {
+        if (gp.getKeyH().ePressed && index != 999) {
+            gp.gameState = gp.dialogueState;
+            gp.getUi().setCurrentDialogue("You found wood");
+            addItem(new Wood());
         }
     }
 
@@ -243,6 +266,11 @@ public abstract class Player extends Entity {
 
             if (item.getType().equals("weapon")) {
                 equippedItem = item;
+
+                // this handles showing the message when the player changes equipment on the item option
+                if (gp.gameState == gp.combatState) {
+                    gp.getCombatHandler().setTurnMessage("You equiped " + item.getName());
+                }
             } else if (item.getType().equals("food")) {
                 Food food = (Food) item;
                 food.eat(this);
@@ -267,10 +295,22 @@ public abstract class Player extends Entity {
         return inventory.getItens();
     }
 
+    public Ammo getPlayerAmmo(String ammoType) {
+        return inventory.getAmmo(ammoType);
+    }
+
+    public void reloadGun(Firearm gun) {
+        inventory.reloadFirearm(gun);
+    }
+
     public void addItem(Item item) {
 
         // the inventory method returns a boolean, but it is only necessary when checking if the item was added
         inventory.addItem(item);
+    }
+
+    public void subtractUseItem() {
+        equippedItem.subtractUse();
     }
 
     public CombatHandler getCombH() {
@@ -281,11 +321,11 @@ public abstract class Player extends Entity {
         return currentEnemy;
     }
 
-    public float getWeight() {
+    public double getWeight() {
         return inventory.getWeight();
     }
 
-    public float getMaxWeight() {
+    public double getMaxWeight() {
         return inventory.getMaxWeight();
     }
 

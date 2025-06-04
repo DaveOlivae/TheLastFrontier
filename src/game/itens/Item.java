@@ -20,13 +20,15 @@ public abstract class Item {
     public Rectangle solidArea = new Rectangle(0, 0, 64, 64);
     public int solidAreaDefaultX, solidAreaDefaultY;
 
-    private float weight;
+    private double weight;
     private int durability;
     private boolean equipable;
+    private boolean stackable = false;
+    private int amount = 1;
     private String description;
     private String type;
 
-    public Item(String type, String name, float weight, int durability, boolean equipable) {
+    public Item(String type, String name, double weight, int durability, boolean equipable) {
         this.type = type;
         this.name = name;
         this.weight = weight;
@@ -89,6 +91,30 @@ public abstract class Item {
         this.image = image;
     }
 
+    public void subtractUse() {
+        if (durability > 0) {
+            durability--;
+        } else {
+            durability = 0;
+        }
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public boolean isStackable() {
+        return stackable;
+    }
+
+    public void setStackable(boolean stackable) {
+        this.stackable = stackable;
+    }
+
     public String getType() {
         return type;
     }
@@ -113,7 +139,7 @@ public abstract class Item {
         return this.name;
     }
 
-    public float getWeight() {
+    public double getWeight() {
         return weight;
     }
 }

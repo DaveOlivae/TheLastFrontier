@@ -1,11 +1,12 @@
 package game.graphics;
 
+import game.events.EventManager;
 import game.logic.Clock;
 import game.logic.CollisionChecker;
 import game.logic.CombatHandler;
 import game.Sound;
-import game.ambientes.Environment;
-import game.ambientes.EnvironmentManager;
+import game.environments.Environment;
+import game.environments.EnvironmentManager;
 import game.entity.Entity;
 import game.entity.Player;
 import game.input.KeyHandler;
@@ -49,6 +50,7 @@ public class GamePanel extends JPanel implements Runnable{
     private EnvironmentManager envM = new EnvironmentManager(this);
     public TileManager tileM = new TileManager(this);
     private KeyHandler keyH = new KeyHandler(this);
+    private EventManager eveM = new EventManager();
     private Sound music = new Sound();
     private Thread gameThread;
     private CollisionChecker cChecker = new CollisionChecker(this, envM);
@@ -72,7 +74,7 @@ public class GamePanel extends JPanel implements Runnable{
 
     public void startGame() {
         gameState = playState;
-        // playMusic(0);
+        playMusic(0);
     }
 
     public void startGameThread() {
@@ -106,6 +108,7 @@ public class GamePanel extends JPanel implements Runnable{
     public void update() {
         if (gameState == playState) {
             envM.update(player, tileM);
+            eveM.update(this);
             player.update();
             clock.update();
 
@@ -210,6 +213,10 @@ public class GamePanel extends JPanel implements Runnable{
 
     public CombatHandler getCombatHandler() {
         return player.getCombH();
+    }
+
+    public Clock getClock() {
+        return clock;
     }
 
     public int getTime() {

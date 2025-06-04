@@ -17,9 +17,13 @@ public class Clock {
     private final int dawn = 3;
 
     public Clock() {
-        this.dayState = day;
-        this.quarter = 600;  // each quarter of the day lasts 2 minutes
-        this.time = quarter;
+        setInitialState();
+    }
+
+    public void setInitialState() {
+        dayState = day;
+        quarter = 6000;
+        time = quarter;
     }
 
     public void update() {

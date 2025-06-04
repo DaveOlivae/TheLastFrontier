@@ -41,6 +41,8 @@ public class KeyHandler implements KeyListener {
             combatState(code);
         } else if (gp.gameState == gp.inventoryState) {
             inventoryState(code);
+        } else if (gp.gameState == gp.gameOverState) {
+            gameOverState(code);
         }
     }
 
@@ -170,9 +172,18 @@ public class KeyHandler implements KeyListener {
             }
             if (code == KeyEvent.VK_ENTER) {
                 if (gp.getUi().getCommandNum() == 0) {
+                    /* ------------ PLAYER CHOSES FIGHT ---------------- */
+
                     gp.getCombatHandler().setCombatScreenState(1);
                 }
+                if (gp.getUi().getCommandNum() == 1) {
+                    /* ------------ PLAYER CHOSES CHANGE ITEM ---------------- */
+
+                    gp.getCombatHandler().setCombatScreenState(10);
+                }
                 if (gp.getUi().getCommandNum() == 2) {
+                    /* ------------ PLAYER CHOSES RUN ---------------- */
+
                     gp.getCombatHandler().run();
                 }
             }
@@ -186,19 +197,21 @@ public class KeyHandler implements KeyListener {
             }
             if (code == KeyEvent.VK_ENTER) {
                 if (gp.getUi().getCommandNum() == 0) {
+                    // player shoots
                     gp.getCombatHandler().playerAttack();
                 }
                 if (gp.getUi().getCommandNum() == 1) {
+                    // player returns to intial screen
                     gp.getCombatHandler().setCombatScreenState(0);
                 }
             }
         } else if (combatScreenState == 2) {
-            // after player attack message state
+            // shows the message after the player attacks or changes item, when the player presses enter the target can attack
             if (code == KeyEvent.VK_ENTER) {
                 gp.getCombatHandler().targetAttack();
             }
         } else if (combatScreenState == 3) {
-            // after target attack
+            // shows the message after the target tried to attack, then it returns to the initial state
             if (code == KeyEvent.VK_ENTER) {
                 gp.getCombatHandler().setCombatScreenState(0);
             }
@@ -210,6 +223,70 @@ public class KeyHandler implements KeyListener {
                 gp.getCombatHandler().removeEnemy();
                 gp.getCombatHandler().setCharsAtOrgPos();
                 gp.gameState = gp.playState;
+            }
+        } else if (combatScreenState == 10) {
+            /* ---------------- INVENTORY/ITEMS OPTION ------------------- */
+
+            if (gp.getUi().getInventoryScreenState() == 0) {
+                if (code == KeyEvent.VK_Q) {
+                    gp.getCombatHandler().setCombatScreenState(0);
+                }
+                if (code == KeyEvent.VK_W) {
+                    if (gp.getUi().getSlotRow() != 0) {
+                        gp.getUi().setSlotRow(gp.getUi().getSlotRow() - 1);
+                    }
+                }
+                if (code == KeyEvent.VK_S) {
+                    if (gp.getUi().getSlotRow() != 3) {
+                        gp.getUi().setSlotRow(gp.getUi().getSlotRow() + 1);
+                    }
+                }
+                if (code == KeyEvent.VK_D) {
+                    if (gp.getUi().getSlotCol() != 4) {
+                        gp.getUi().setSlotCol(gp.getUi().getSlotCol() + 1);
+                    }
+                }
+                if (code == KeyEvent.VK_A) {
+                    if (gp.getUi().getSlotCol() != 0) {
+                        gp.getUi().setSlotCol(gp.getUi().getSlotCol() - 1);
+                    }
+                }
+                if (code == KeyEvent.VK_ENTER) {
+                    if (gp.getUi().isSlotNotEmpty()) {
+                        gp.getUi().setInventoryScreenState(1);
+                    }
+                }
+            } else if (gp.getUi().getInventoryScreenState() == 2) {
+                if (code == KeyEvent.VK_W) {
+                    gp.getUi().setCommandNum(((gp.getUi().getCommandNum()) - 1), 2);
+                }
+                if (code == KeyEvent.VK_S) {
+                    gp.getUi().setCommandNum(((gp.getUi().getCommandNum()) + 1), 2);
+                }
+                if (code == KeyEvent.VK_ENTER) {
+                    if (gp.getUi().getCommandNum() == 0) {
+                        gp.getPlayer().selectItem();
+                        gp.getUi().setInventoryScreenState(0);
+                    }
+                    if (gp.getUi().getCommandNum() == 2) {
+                        gp.getUi().setInventoryScreenState(0);
+                    }
+                    gp.getUi().setCommandNum(0, 2);
+                }
+            } else if (gp.getUi().getInventoryScreenState() == 3) {
+                if (code == KeyEvent.VK_W) {
+                    gp.getUi().setCommandNum(((gp.getUi().getCommandNum()) - 1), 1);
+                }
+                if (code == KeyEvent.VK_S) {
+                    gp.getUi().setCommandNum(((gp.getUi().getCommandNum()) + 1), 1);
+                }
+                if (code == KeyEvent.VK_ENTER) {
+                    if (gp.getUi().getCommandNum() == 1) {
+                        gp.getPlayer().selectItem();
+                        gp.getUi().setInventoryScreenState(0);
+                    }
+                    gp.getUi().setCommandNum(0, 1);
+                }
             }
         }
     }
@@ -240,9 +317,11 @@ public class KeyHandler implements KeyListener {
                 }
             }
             if (code == KeyEvent.VK_ENTER) {
-                gp.getUi().setInventoryScreenState(1);
+                if (gp.getUi().isSlotNotEmpty()) {
+                    gp.getUi().setInventoryScreenState(1);
+                }
             }
-        } else if (gp.getUi().getInventoryScreenState() == 1) {
+        } else if (gp.getUi().getInventoryScreenState() == 2) {
             if (code == KeyEvent.VK_W) {
                 gp.getUi().setCommandNum(((gp.getUi().getCommandNum()) - 1), 2);
             }
@@ -257,6 +336,40 @@ public class KeyHandler implements KeyListener {
                 if (gp.getUi().getCommandNum() == 2) {
                     gp.getUi().setInventoryScreenState(0);
                 }
+                gp.getUi().setCommandNum(0, 2);
+            }
+        } else if (gp.getUi().getInventoryScreenState() == 3) {
+            if (code == KeyEvent.VK_W) {
+                gp.getUi().setCommandNum(((gp.getUi().getCommandNum()) - 1), 1);
+            }
+            if (code == KeyEvent.VK_S) {
+                gp.getUi().setCommandNum(((gp.getUi().getCommandNum()) + 1), 1);
+            }
+            if (code == KeyEvent.VK_ENTER) {
+                if (gp.getUi().getCommandNum() == 1) {
+                    gp.getPlayer().selectItem();
+                    gp.getUi().setInventoryScreenState(0);
+                }
+                gp.getUi().setCommandNum(0, 1);
+            }
+        }
+    }
+
+    private void gameOverState(int code) {
+        if (code == KeyEvent.VK_W) {
+            gp.getUi().setCommandNum(((gp.getUi().getCommandNum()) - 1), 1);
+        }
+        if (code == KeyEvent.VK_S) {
+            gp.getUi().setCommandNum(((gp.getUi().getCommandNum()) + 1), 1);
+        }
+        if (code == KeyEvent.VK_ENTER) {
+            if (gp.getUi().getCommandNum() == 0) {
+                gp.gameState = gp.titleState;
+                gp.getEnvM().setInitialState();
+                gp.getClock().setInitialState();
+            }
+            if (gp.getUi().getCommandNum() == 1) {
+                System.exit(0);
             }
         }
     }

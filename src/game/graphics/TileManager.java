@@ -57,6 +57,7 @@ public class TileManager {
         for (int i = 0; i <= 46; i += 30) {
             for (int j = 7; j <= 16; j++) {
                 this.tile.get(i + j).collision = true;
+                this.tile.get(i + j).collectable = true;
             }
         }
 
@@ -75,6 +76,22 @@ public class TileManager {
         this.tile.get(101).collision = true;
         this.tile.get(102).collision = true;
 
+        /* setting collectability for trees */
+
+        this.tile.get(67).collectable = true;
+        this.tile.get(68).collectable = true;
+        this.tile.get(69).collectable = true;
+        this.tile.get(70).collectable = true;
+        this.tile.get(71).collectable = true;
+        this.tile.get(72).collectable = true;
+        this.tile.get(73).collectable = true;
+        this.tile.get(74).collectable = true;
+        this.tile.get(75).collectable = true;
+        this.tile.get(76).collectable = true;
+        this.tile.get(101).collectable = true;
+        this.tile.get(102).collectable = true;
+        this.tile.get(105).collectable = true;
+        this.tile.get(106).collectable = true;
     }
 
 

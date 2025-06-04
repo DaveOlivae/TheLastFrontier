@@ -4,6 +4,7 @@ import game.entity.Entity;
 import game.entity.Player;
 import game.entity.enemies.Enemy;
 import game.graphics.GamePanel;
+import game.itens.weapons.Firearm;
 import game.itens.weapons.Weapon;
 
 import java.awt.*;
@@ -42,12 +43,35 @@ public class CombatHandler {
 
         double diceRoll = Math.random();
 
-        if (diceRoll < chanceOfShot) {
-            target.damage(damagePoints);
-            turnMessage = "You shot the " + target.getName() + "\n" +
-                            "You gave " + damagePoints + " points of\ndamage";
+        if (weapon instanceof Firearm gun && gun.getLoad() == 0) {
+            player.reloadGun(gun);
+
+            // this if deals with the situation where theres no more ammo on the gun and the player also doesnt have ammo
+            if (player.getPlayerAmmo(gun.getFirearmType()).getQuantity() == 0 && gun.getLoad() == 0) {
+                turnMessage = "You don't have\nammo left.";
+            }
         } else {
-            turnMessage = "You missed!";
+            if (diceRoll < chanceOfShot) {
+                target.damage(damagePoints);
+
+                if (weapon instanceof Firearm gun) {
+                    turnMessage = "You shot the " + target.getName() + "\n" +
+                            "You gave " + damagePoints + " points of\ndamage";
+
+                    gun.shotGun();
+                } else {
+                    turnMessage = "You stabbed the " + target.getName() + "\n" +
+                            "You gave " + damagePoints + " points of\ndamage";
+                }
+
+                player.subtractUseItem();
+            } else {
+                if (weapon instanceof Firearm gun) {
+                    gun.shotGun();
+                }
+                turnMessage = "You missed!";
+                player.subtractUseItem();
+            }
         }
 
         if (target.getLife() == 0) {
@@ -98,6 +122,7 @@ public class CombatHandler {
 
         if (roll <= 4) {
             turnMessage = "You weren't able to \nescape";
+            combatScreenState = 2;
         } else {
             // these coordinates set the player and the enemy to its original position at the beginning of the game
             setCharsAtOrgPos();
@@ -124,6 +149,10 @@ public class CombatHandler {
 
     public void setCombatScreenState(int combatScreenState) {
         this.combatScreenState = combatScreenState;
+    }
+
+    public void setTurnMessage(String turnMessage) {
+        this.turnMessage = turnMessage;
     }
 
     public Entity getTarget() {

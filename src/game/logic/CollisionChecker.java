@@ -1,6 +1,6 @@
 package game.logic;
 
-import game.ambientes.EnvironmentManager;
+import game.environments.EnvironmentManager;
 import game.entity.Entity;
 import game.graphics.GamePanel;
 import game.itens.Item;
@@ -16,6 +16,80 @@ public class CollisionChecker {
     public CollisionChecker(GamePanel gp, EnvironmentManager envM) {
         this.envM = envM;
         this.gp = gp;
+    }
+
+    public int collectResource(Entity entity) {
+        Rectangle entitySolidArea = entity.getSolidArea();
+        String entityDirection = entity.getDirection();
+        int entitySpeed = entity.getSpeed();
+        int entityEnvX = entity.getEnvX();
+        int entityEnvY = entity.getEnvY();
+
+        int entityLeftWorldX = entityEnvX + entitySolidArea.x;
+        int entityRightWorldX = entityEnvX + entitySolidArea.x + entitySolidArea.width;
+        int entityTopWorldY = entityEnvY + entitySolidArea.y;
+        int entityBottomWorldY = entityEnvY + entitySolidArea.y + entitySolidArea.height;
+
+        int entityLeftCol = entityLeftWorldX/gp.tileSize;
+        int entityRightCol = entityRightWorldX/gp.tileSize;
+        int entityTopRow = entityTopWorldY/gp.tileSize;
+        int entityBottomRow = entityBottomWorldY/gp.tileSize;
+
+        int tileNum1, tileNum2;
+
+        switch(entityDirection) {
+            case "up":
+                entityTopRow = (entityTopWorldY - entitySpeed)/gp.tileSize;
+                tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityTopRow];
+                tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityTopRow];
+
+                if (gp.tileM.tile.get(tileNum1).collectable)  {
+                    return tileNum1;
+                }
+                if (gp.tileM.tile.get(tileNum2).collectable) {
+                    return tileNum2;
+                }
+
+                break;
+            case "down":
+                entityBottomRow = (entityBottomWorldY + entitySpeed)/gp.tileSize;
+                tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityBottomRow];
+                tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityBottomRow];
+
+                if (gp.tileM.tile.get(tileNum1).collectable)  {
+                    return tileNum1;
+                }
+                if (gp.tileM.tile.get(tileNum2).collectable) {
+                    return tileNum2;
+                }
+                break;
+            case "left":
+                entityLeftCol = (entityLeftWorldX - entitySpeed)/gp.tileSize;
+                tileNum1 = gp.tileM.mapTileNum[entityLeftCol][entityTopRow];
+                tileNum2 = gp.tileM.mapTileNum[entityLeftCol][entityBottomRow];
+
+                if (gp.tileM.tile.get(tileNum1).collectable)  {
+                    return tileNum1;
+                }
+                if (gp.tileM.tile.get(tileNum2).collectable) {
+                    return tileNum2;
+                }
+                break;
+            case "right":
+                entityRightCol = (entityRightWorldX + entitySpeed)/gp.tileSize;
+                tileNum1 = gp.tileM.mapTileNum[entityRightCol][entityTopRow];
+                tileNum2 = gp.tileM.mapTileNum[entityRightCol][entityBottomRow];
+
+                if (gp.tileM.tile.get(tileNum1).collectable)  {
+                    return tileNum1;
+                }
+                if (gp.tileM.tile.get(tileNum2).collectable) {
+                    return tileNum2;
+                }
+                break;
+        }
+
+        return 999;
     }
 
     public void checkTile(Entity entity) {
