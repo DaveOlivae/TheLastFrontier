@@ -1,9 +1,8 @@
 package game.entity;
 
-import game.events.Event;
-import game.events.EventManager;
+import game.events.eventoDoencaFerimento.Hypotermia;
 import game.events.eventoDoencaFerimento.SicknessInjuryEvent;
-import game.itens.materiais.Wood;
+import game.itens.food.Coffee;
 import game.itens.weapons.Ammo;
 import game.itens.weapons.Firearm;
 import game.logic.CombatHandler;
@@ -28,6 +27,7 @@ public abstract class Player extends Entity {
     private Item equippedItem;
 
     private List<SicknessInjuryEvent> conditions;
+    private List<Item> currentLoot;
 
     private int currentEnemy;
 
@@ -78,6 +78,7 @@ public abstract class Player extends Entity {
         this.sanity = maxSanity;
 
         this.conditions = new ArrayList<>();
+        this.currentLoot = new ArrayList<>();
 
         this.inventory = new Inventory(maxWeight);
 
@@ -188,10 +189,22 @@ public abstract class Player extends Entity {
         }
 
         if (hunger >= 100) {
+            gp.getUi().setCurrentDialogue("You died of starvation");
             gp.gameState = gp.gameOverState;
         }
 
         if (thirst >= 100) {
+            gp.getUi().setCurrentDialogue("You died of dehydration");
+            gp.gameState = gp.gameOverState;
+        }
+
+        if (energy <= 0) {
+            gp.getUi().setCurrentDialogue("You died of fatigue");
+            gp.gameState = gp.gameOverState;
+        }
+
+        if (sanity <= 0) {
+            gp.getUi().setCurrentDialogue("You went insane");
             gp.gameState = gp.gameOverState;
         }
 
@@ -215,9 +228,14 @@ public abstract class Player extends Entity {
                     }
                 }
 
+            } else if (item instanceof Loot loot) {
+                gp.gameState = gp.lootState;
+                currentLoot = loot.getLoot();
+
             } else if (inventory.addItem(item)) {
                 itens.remove(index);
             }
+
         }
     }
 
@@ -235,6 +253,12 @@ public abstract class Player extends Entity {
                 } else {
                     gp.getUi().setCurrentDialogue("You don't have a canteen");
                 }
+            }
+
+            if (index == 210 || index == 211 || index == 212 || index == 213) {
+                conditions.removeIf(event -> event instanceof Hypotermia);
+
+                gp.getUi().setCurrentDialogue("You've warmed yourself.\n");
             }
 
             if (index == 214 || index == 215 || index == 216 || index == 217) {
@@ -317,6 +341,35 @@ public abstract class Player extends Entity {
         }
     }
 
+    public void selectLoot() {
+        int itemIndex = gp.getUi().getIndexOnSlot();
+
+        if (itemIndex < currentLoot.size()) {
+            Item item = currentLoot.get(itemIndex);
+
+            if (item instanceof Ammo ammo) {
+                Ammo playerAmmo = inventory.getAmmo(ammo.getName());
+
+                if (playerAmmo != null) {
+                    playerAmmo.setQuantity(playerAmmo.getQuantity() + ammo.getQuantity());
+                    currentLoot.remove(itemIndex);
+                } else {
+                    if (inventory.addItem(ammo)) {
+                        currentLoot.remove(itemIndex);
+                    }
+                }
+            } else if (inventory.addItem(item)) {
+                currentLoot.remove(itemIndex);
+            }
+        }
+
+        if (currentLoot.isEmpty()) {
+            gp.gameState = gp.playState;
+
+            gp.getItens().removeIf(item -> item instanceof Loot loot && loot.getLoot().isEmpty());
+        }
+    }
+
     public void selectItem() {
         int itemIndex = gp.getUi().getIndexOnSlot();
 
@@ -332,7 +385,12 @@ public abstract class Player extends Entity {
                 }
             } else if (item.getType().equals("food")) {
                 Food food = (Food) item;
-                eat(food.getHungerPoints());
+
+                if (food instanceof Coffee coffee) {
+                    setEnergy(energy - coffee.getEnergyRestored());
+                } else {
+                    eat(food);
+                }
 
                 food.setAmount(food.getAmount() - 1);
 
@@ -357,7 +415,9 @@ public abstract class Player extends Entity {
         equippedItem = item;
     }
 
-    public void eat(int hungerPoints) {
+    public void eat(Food food) {
+        int hungerPoints = food.getHungerPoints();
+
         hunger -= hungerPoints;
         if (hunger <= 0) {
             hunger = 0;
@@ -436,6 +496,10 @@ public abstract class Player extends Entity {
         return false;
     }
 
+    public List<Item> getCurrentLoot() {
+        return currentLoot;
+    }
+
     public void addCondition(SicknessInjuryEvent condition) {
         conditions.add(condition);
     }
@@ -482,5 +546,12 @@ public abstract class Player extends Entity {
 
     public int getSanity() {
         return sanity;
+    }
+
+    public void sanityPoints(int points) {
+        sanity -= points;
+        if (sanity <= 0) {
+            sanity = 0;
+        }
     }
 }

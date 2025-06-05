@@ -70,7 +70,155 @@ public class UI {
         if (gp.gameState == gp.gameOverState) {
             drawGameOverScreen();
         }
+        if (gp.gameState == gp.lootState) {
+            drawStats();
+            drawLootBox();
+        }
 
+    }
+
+    public void drawLootBox() {
+        BufferedImage image;
+        String text;
+
+        Player player = gp.getPlayer();
+        List<Item> loot = player.getCurrentLoot();
+
+        int x = gp.tileSize*8;
+        int y = gp.tileSize*3;
+
+        try {
+            image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/hud/inventory_box.png")));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        g2.drawImage(image, x, y, 480, 392, null);
+
+        /* -------------- draw itens ------------------ */
+
+        int startX = x + 20;
+        int startY = y + 20;
+        int slotX = startX + 12;
+        int slotY = startY + 12;
+
+        for (int i = 0; i < loot.size(); i++) {
+            g2.drawImage(loot.get(i).getImage(), slotX, slotY, gp.tileSize, gp.tileSize, null);
+
+            // DISPLAY AMOUNT
+
+            if (loot.get(i).getAmount() > 1) {
+                String s = "" + loot.get(i).getAmount();
+                int amountX = slotX + gp.tileSize;
+                int amountY = slotY + gp.tileSize;
+
+                drawText(s, amountX, amountY, 32);
+            }
+
+            slotX += (gp.tileSize + 24);
+
+            if (i == 4 || i == 9 || i == 14 || i == 19) {
+                slotX = startX + 12;
+                slotY += (gp.tileSize + 24);
+            }
+        }
+
+        /* ------------- cursor --------------- */
+
+        int selectionColSide = 88;
+        int selX = startX + selectionColSide*slotCol;
+        int selY = startY + selectionColSide*slotRow;
+
+        try {
+            image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/hud/selection_box.png")));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        g2.drawImage(image, selX, selY, selectionColSide, selectionColSide, null);
+
+        /* ---------------- description box ------------------- */
+
+        y += 392;
+
+        try {
+            image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream("/hud/description_box.png")));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        g2.drawImage(image, x, y, 480, 248, null);
+
+        x += gp.tileSize/2;
+        y += 55;
+
+        int itemIndex = getIndexOnSlot();
+
+        slotNotEmpty = itemIndex < loot.size();
+
+        if (slotNotEmpty) {
+
+            loot.get(itemIndex).updateDescription();
+
+            text = loot.get(itemIndex).getDescription();
+
+            if (loot.get(itemIndex) instanceof Firearm gun) {
+                // all of this is to deal with the ammo
+
+                String ammoType = gun.getFirearmType();
+
+                if (player.getPlayerAmmo(ammoType) == null) {
+                    text = loot.get(itemIndex).getDescription() + "0";
+                } else {
+                    int quantity = player.getPlayerAmmo(ammoType).getQuantity();
+                    text = loot.get(itemIndex).getDescription() + quantity;
+                }
+            }
+
+            g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 45));
+
+            g2.setColor(Color.white);
+
+            // this is made so that the description of the itens fits in the description box
+            int counter = 0;
+            for (String line : text.split("\n")) {
+                g2.drawString(line, x, y);
+                y += 40;
+                counter++;
+                if (counter == 5) {
+                    y -= 200;
+                    x += gp.tileSize*5;
+                    counter = 0;
+                }
+            }
+        }
+
+        /* --------------- selecting an item ----------------------- */
+
+
+        if (itemIndex < loot.size() && inventoryScreenState == 1) {
+
+            int boxX = selX + gp.tileSize / 2;
+            int boxY = selY + gp.tileSize / 2;
+
+            drawBox("/hud/options_box.png", boxX, boxY, gp.tileSize * 3, gp.tileSize * 3);
+
+            int stringX = boxX + gp.tileSize / 2 + gp.tileSize / 6;
+            int stringY = boxY + 60;
+
+            text = "Get";
+            drawText(text, stringX, stringY, 45);
+            if (commandNum == 0) {
+                g2.drawString(">", stringX - gp.tileSize / 4, stringY);
+            }
+
+            stringY += 50;
+            text = "Cancel";
+            drawText(text, stringX, stringY, 45);
+            if (commandNum == 2) {
+                g2.drawString(">", stringX - gp.tileSize / 4, stringY);
+            }
+        }
     }
 
     private void drawGameOverScreen() {
@@ -87,9 +235,14 @@ public class UI {
         int y = gp.tileSize*3;
         drawTextBold(text, x, y, 100);
 
+        text = currentDialogue;
+        x = getXforCenteredText(text);
+        y += gp.tileSize*3;
+        drawText(text, x, y, 80);
+
         text = "Retry";
         x = getXforCenteredText(text);
-        y += gp.tileSize*4;
+        y += gp.tileSize*3;
         drawText(text, x, y, 80);
         if (commandNum == 0) {
             g2.drawString(">", x - gp.tileSize, y);
@@ -142,7 +295,7 @@ public class UI {
         drawTextBold(text, x, y, textSize);
 
         y += space;
-        text =  "Weight: " + String.format("%.2f", player.getWeight()) + "/" + String.format("%.2f", player.getMaxWeight());
+        text =  "Weight: " + String.format("%.1f", player.getWeight()) + "/" + String.format("%.0f", player.getMaxWeight());
         drawTextBold(text, x, y, textSize);
 
         y += space;
@@ -375,7 +528,7 @@ public class UI {
 
         String message = combH.getTurnMessage();
 
-        String path = "/hud/battle_mat_" + currentEnv.getName() + ".png";
+        String path = "/hud/battle_mat_forest.png";
 
         try {
             image = ImageIO.read(Objects.requireNonNull(getClass().getResourceAsStream(path)));

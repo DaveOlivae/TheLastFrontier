@@ -3,6 +3,7 @@ package game.logic;
 import game.entity.Entity;
 import game.entity.Player;
 import game.entity.enemies.Enemy;
+import game.environments.Environment;
 import game.graphics.GamePanel;
 import game.itens.weapons.Firearm;
 import game.itens.weapons.Weapon;
@@ -140,6 +141,12 @@ public class CombatHandler {
     }
 
     public void removeEnemy() {
+        // we're gonna add the enemy's loot in the environment and remove the enemy
+
+        Environment currentEnv = gp.getEnvM().getCurrentEnv();
+
+        currentEnv.addItem(target.getLoot(), targetX, targetY);
+
         gp.getEnvM().getCurrentEnv().removeEnemy(target);
     }
 

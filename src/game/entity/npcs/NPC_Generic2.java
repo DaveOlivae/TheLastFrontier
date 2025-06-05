@@ -3,8 +3,8 @@ package game.entity.npcs;
 import game.entity.Entity;
 import game.graphics.GamePanel;
 
-public class NPC_Girl extends Entity {
-    public NPC_Girl(GamePanel gp) {
+public class NPC_Generic2 extends Entity {
+    public NPC_Generic2(GamePanel gp) {
         super("Girl", gp, 0, 0, 64, 64, 1, "down");
 
         loadImage("/npc/npc1.png");
@@ -12,7 +12,8 @@ public class NPC_Girl extends Entity {
     }
 
     public void setDialogue() {
-        setDialogue("You can press 'q' to check your inventory!");
+        setDialogue("I'm leaving soon");
+        setDialogue("You're new here?");
     }
 
     public void speak() {

@@ -29,8 +29,8 @@ public class EnvironmentManager {
     }
 
     public void setInitialState() {
-        this.playerMapX = 17;
-        this.playerMapY = 19;
+        this.playerMapX = 10;
+        this.playerMapY = 18;
         this.worldMapNum = new String[worldMapWidth][worldMapHeight];
         this.historico = new Environment[worldMapWidth][worldMapHeight];
 

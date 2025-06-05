@@ -21,6 +21,7 @@ public class EventManager {
 
                     if (!gp.getPlayer().searchCondition(e)) {
                         gp.getPlayer().addCondition(e);
+                        event.execute(gp);
                     }
                 } else {
                     event.execute(gp);

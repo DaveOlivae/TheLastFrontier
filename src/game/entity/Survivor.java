@@ -3,6 +3,7 @@ package game.entity;
 import game.graphics.GamePanel;
 import game.input.KeyHandler;
 import game.itens.Canteen;
+import game.itens.food.Meat;
 import game.itens.weapons.Ammo;
 import game.itens.weapons.Knife;
 
@@ -24,7 +25,8 @@ public class Survivor extends Player {
     public void starterKit() {
         addItem(new Knife());
         addItem(new Canteen());
-        addItem(new Ammo("pistol", 12));
+        addItem(new Ammo("pistol", 16));
+        addItem(new Meat());
 
         equipItem(itens().getFirst());
     }

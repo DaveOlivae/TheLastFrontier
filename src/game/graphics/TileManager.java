@@ -105,6 +105,26 @@ public class TileManager {
         this.tile.get(238).collision = true;
         this.tile.get(239).collision = true;
 
+        this.tile.get(77).collision = false;
+        this.tile.get(78).collision = false;
+        this.tile.get(79).collision = false;
+        this.tile.get(80).collision = false;
+        this.tile.get(81).collision = false;
+        this.tile.get(107).collision = false;
+        this.tile.get(108).collision = false;
+        this.tile.get(109).collision = false;
+        this.tile.get(110).collision = false;
+        this.tile.get(111).collision = false;
+        this.tile.get(112).collision = false;
+        this.tile.get(203).collision = false;
+        this.tile.get(204).collision = false;
+        this.tile.get(205).collision = false;
+        this.tile.get(206).collision = false;
+        this.tile.get(207).collision = false;
+        this.tile.get(208).collision = false;
+        this.tile.get(209).collision = false;
+        this.tile.get(59).collision = false;
+
         /* setting collectability */
         this.tile.get(60).collectable = true;
         this.tile.get(61).collectable = true;

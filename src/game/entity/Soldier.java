@@ -25,7 +25,7 @@ public class Soldier extends Player {
     public void starterKit() {
         addItem(new Knife());
         addItem(new Canteen());
-        addItem(new Ammo("pistol", 12));
+        addItem(new Ammo("pistol", 24));
 
         equipItem(itens().getFirst());
     }

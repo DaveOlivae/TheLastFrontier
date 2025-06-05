@@ -1,9 +1,7 @@
 package game.environments;
 
-import game.entity.enemies.EN_Raider;
 import game.graphics.GamePanel;
 import game.graphics.TileManager;
-import game.itens.food.Apple;
 
 public class LakeRiver extends Environment {
 
