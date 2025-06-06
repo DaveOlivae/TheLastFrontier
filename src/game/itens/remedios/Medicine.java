@@ -1,11 +1,10 @@
 package game.itens.remedios;
 
-import game.itens.Item;
+import game.itens.Consumable;
 
-public abstract class Medicine extends Item {
+public abstract class Medicine extends Consumable {
 
-    public Medicine(String nome, int peso, int durabilidade) {
-        super("consumable", nome, peso, durabilidade, false);
-
+    public Medicine(String nome, int peso) {
+        super("consumable", nome, peso);
     }
 }

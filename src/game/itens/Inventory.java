@@ -68,7 +68,7 @@ public class Inventory {
 
             int quantity = ammo.getQuantity();
 
-            if (quantity > gun.getCapacity()) {
+            if (quantity >= gun.getCapacity()) {
                 quantity -= gun.getCapacity();
 
                 gun.loadGun(gun.getCapacity());

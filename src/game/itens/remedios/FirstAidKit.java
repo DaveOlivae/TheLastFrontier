@@ -9,7 +9,7 @@ import java.util.List;
 public class FirstAidKit extends Medicine{
 
     public FirstAidKit() {
-        super("aid", 1, 1);
+        super("firstaidkit", 1);
 
         setImage("/itens/firstaid.png");
     }
@@ -19,9 +19,12 @@ public class FirstAidKit extends Medicine{
         setDescription("Cures all conditions");
     }
 
+    @Override
     public void use(Player player) {
         List<SicknessInjuryEvent> conditions = player.getConditions();
 
         conditions.removeIf(condition -> !(condition instanceof Hypotermia));
+
+        setAmount(getAmount() - 1);
     }
 }

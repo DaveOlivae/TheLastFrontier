@@ -254,7 +254,9 @@ public abstract class Entity {
     }
 
     public void setLife(int life) {
-        this.life = life;
+        if (life <= 100) {
+            this.life = life;
+        }
     }
 
     public void setDialogue(String dialogue) {

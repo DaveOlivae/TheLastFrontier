@@ -3,6 +3,7 @@ package game.entity;
 import game.graphics.GamePanel;
 import game.input.KeyHandler;
 import game.itens.Canteen;
+import game.itens.remedios.Bandages;
 import game.itens.weapons.Ammo;
 import game.itens.weapons.Knife;
 
@@ -26,6 +27,7 @@ public class Soldier extends Player {
         addItem(new Knife());
         addItem(new Canteen());
         addItem(new Ammo("pistol", 24));
+        addItem(new Bandages());
 
         equipItem(itens().getFirst());
     }

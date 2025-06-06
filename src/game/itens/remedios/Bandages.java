@@ -3,20 +3,23 @@ package game.itens.remedios;
 import game.entity.Player;
 
 public class Bandages extends Medicine {
-    private int healingPoints = 20;
+    private int healingPoints = 40;
 
     public Bandages() {
-        super("aid", 1, 1);
+        super("bandages", 1);
 
-
+        setImage("/itens/bandages.png");
     }
 
     @Override
     public void updateDescription() {
-        setDescription("Heals 20 hp");
+        setDescription("Heals " + healingPoints + " hp");
     }
 
+    @Override
     public void use(Player player) {
         player.setLife(player.getLife() + healingPoints);
+
+        setAmount(getAmount() - 1);
     }
 }

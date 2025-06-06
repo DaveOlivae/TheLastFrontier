@@ -4,7 +4,7 @@ import game.events.Event;
 import game.graphics.GamePanel;
 
 public class Crows extends Event {
-    private int sanityPoints;
+    private int sanityPoints = 20;
 
     public Crows(double probability) {
         super("crows",

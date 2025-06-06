@@ -1,14 +1,15 @@
 package game.entity.enemies;
 
 import game.graphics.GamePanel;
+import game.itens.Water;
 import game.itens.food.Pomegranate;
 import game.itens.remedios.Bandages;
 import game.itens.weapons.Ammo;
-import game.itens.weapons.Revolver;
+import game.itens.weapons.Knife;
 
 public class EN_RaiderBlue extends Enemy{
     public EN_RaiderBlue(GamePanel gp) {
-        super("Raider", gp, 0, 0, 64, 64, 1, "down", new Revolver());
+        super("Raider", gp, 0, 0, 64, 64, 1, "down", new Knife());
 
         // attributes
         setMaxLife(100);
@@ -19,5 +20,6 @@ public class EN_RaiderBlue extends Enemy{
         setLoot(new Ammo("pistol", 4));
         setLoot(new Bandages());
         setLoot(new Pomegranate());
+        setLoot(new Water());
     }
 }

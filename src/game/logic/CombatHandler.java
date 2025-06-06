@@ -48,7 +48,7 @@ public class CombatHandler {
             player.reloadGun(gun);
 
             // this if deals with the situation where theres no more ammo on the gun and the player also doesnt have ammo
-            if (player.getPlayerAmmo(gun.getFirearmType()).getQuantity() == 0 && gun.getLoad() == 0) {
+            if (player.getPlayerAmmo(gun.getFirearmType()) == null && gun.getLoad() == 0) {
                 turnMessage = "You don't have\nammo left.";
             }
         } else {

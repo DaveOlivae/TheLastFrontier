@@ -3,6 +3,7 @@ package game.entity;
 import game.events.eventoDoencaFerimento.Hypotermia;
 import game.events.eventoDoencaFerimento.SicknessInjuryEvent;
 import game.itens.food.Coffee;
+import game.itens.remedios.Medicine;
 import game.itens.weapons.Ammo;
 import game.itens.weapons.Firearm;
 import game.logic.CombatHandler;
@@ -176,6 +177,7 @@ public abstract class Player extends Entity {
         /* ---------------- UPDATE PLAYER STATS -------------------- */
 
         if (getLife() <= 0) {
+            gp.getUi().setCurrentDialogue("Your life reached 0");
             gp.gameState = gp.gameOverState;
         }
 
@@ -336,6 +338,7 @@ public abstract class Player extends Entity {
 
             energy = maxEnergy;
             setLife(getMaxLife());
+            sanity = maxSanity;
         } else {
             gp.getUi().setCurrentDialogue("You can only sleep\nat night.");
         }
@@ -383,19 +386,13 @@ public abstract class Player extends Entity {
                 if (gp.gameState == gp.combatState) {
                     gp.getCombatHandler().setTurnMessage("You equiped " + item.getName());
                 }
-            } else if (item.getType().equals("food")) {
-                Food food = (Food) item;
+            } else if (item instanceof Consumable cons) {
+                cons.use(this);
 
-                if (food instanceof Coffee coffee) {
-                    setEnergy(energy - coffee.getEnergyRestored());
-                } else {
-                    eat(food);
-                }
+                cons.setAmount(cons.getAmount() - 1);
 
-                food.setAmount(food.getAmount() - 1);
-
-                if (food.getAmount() <= 0) {
-                    itens().remove(food);
+                if (cons.getAmount() <= 0) {
+                    itens().remove(cons);
                 }
             } else if (item instanceof Canteen canteen) {
                 canteen.drinkWater(this);
@@ -415,8 +412,7 @@ public abstract class Player extends Entity {
         equippedItem = item;
     }
 
-    public void eat(Food food) {
-        int hungerPoints = food.getHungerPoints();
+    public void eat(int hungerPoints) {
 
         hunger -= hungerPoints;
         if (hunger <= 0) {
@@ -494,6 +490,20 @@ public abstract class Player extends Entity {
         }
 
         return false;
+    }
+
+    public boolean searchCondition(String name) {
+        for (SicknessInjuryEvent condition : conditions) {
+            if (condition.getName().equals(name)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void removeCondition(String name) {
+        conditions.removeIf(condition -> condition.getName().equals(name));
     }
 
     public List<Item> getCurrentLoot() {

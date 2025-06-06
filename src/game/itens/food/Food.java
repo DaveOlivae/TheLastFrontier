@@ -1,12 +1,13 @@
 package game.itens.food;
 
-import game.itens.Item;
+import game.entity.Player;
+import game.itens.Consumable;
 
-public abstract class Food extends Item {
+public abstract class Food extends Consumable {
     private int hungerPoints;  // pontos de fome restaurados
 
-    public Food(String name, double weight, int durability, int hungerPoints) {
-        super("food", name, weight, durability, false);
+    public Food(String name, double weight, int hungerPoints) {
+        super("food", name, weight);
         this.hungerPoints = hungerPoints;
 
         setStackable(true);
@@ -19,6 +20,11 @@ public abstract class Food extends Item {
                 "Weight: " + getWeight() + "\n" +
                 "Durability: " + getDurability() + "\n" +
                 "Restores: " + getHungerPoints() + "\n");
+    }
+
+    @Override
+    public void use(Player player) {
+        player.eat(hungerPoints);
     }
 
     public int getHungerPoints() {

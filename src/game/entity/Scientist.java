@@ -4,6 +4,7 @@ import game.graphics.GamePanel;
 import game.input.KeyHandler;
 import game.itens.Canteen;
 import game.itens.food.Coffee;
+import game.itens.remedios.Bandages;
 import game.itens.weapons.Ammo;
 import game.itens.weapons.Knife;
 
@@ -27,6 +28,7 @@ public class Scientist extends Player {
         addItem(new Canteen());
         addItem(new Ammo("pistol", 12));
         addItem(new Coffee());
+        addItem(new Bandages());
 
         equipItem(itens().getFirst());
     }

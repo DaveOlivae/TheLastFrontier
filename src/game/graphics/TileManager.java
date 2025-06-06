@@ -124,6 +124,7 @@ public class TileManager {
         this.tile.get(208).collision = false;
         this.tile.get(209).collision = false;
         this.tile.get(59).collision = false;
+        this.tile.get(154).collision = false;
 
         /* setting collectability */
         this.tile.get(60).collectable = true;

@@ -16,11 +16,12 @@ public class NPC_OldMan extends Entity {
         setDialogue("What? who are you? how did you end up here?");
         setDialogue("You don't remember? you seem to have been \nwandering around for days");
         setDialogue("Nobody survives the waste land, lad, you probably \nbeen robbed or something");
-        setDialogue("The closest city is Ellis, maybe you'll find some \nanswers there");
+        setDialogue("The closest city is Ellis, just follow the roads\nwest");
+        setDialogue("There are 2 other cities around , Pencey and\n St. Francis. Pencey is up north and\nSt. Francis is NorthWest");
+        setDialogue("Good luck");
     }
 
     public void speak() {
         super.speak();
-
     }
 }

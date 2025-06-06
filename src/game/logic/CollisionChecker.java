@@ -377,7 +377,7 @@ public class CollisionChecker {
         switch (entityDirection) {
             case "up":
                 entitySolidArea.y -= entitySpeed;
-                if (entitySolidArea.y < gp.tileSize) {
+                if (entitySolidArea.y < gp.tileSize*2) {
                     entity.setCollisionOn(true);
                 }
                 break;
@@ -389,13 +389,13 @@ public class CollisionChecker {
                 break;
             case "left":
                 entitySolidArea.x -= entitySpeed;
-                if (entitySolidArea.x < gp.tileSize) {
+                if (entitySolidArea.x < gp.tileSize*2) {
                     entity.setCollisionOn(true);
                 }
                 break;
             case "right":
                 entitySolidArea.x += entitySpeed;
-                if (entitySolidArea.x > gp.envHeight - gp.tileSize) {
+                if (entitySolidArea.x > gp.envHeight - 2*gp.tileSize) {
                     entity.setCollisionOn(true);
                 }
                 break;

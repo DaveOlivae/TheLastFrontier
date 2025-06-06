@@ -1,5 +1,6 @@
 package game.graphics;
 
+import game.events.eventoDoencaFerimento.SicknessInjuryEvent;
 import game.logic.CombatHandler;
 import game.environments.Environment;
 import game.environments.EnvironmentManager;
@@ -427,7 +428,9 @@ public class UI {
 
             if (inventoryScreenState == 1) {
 
-                if (itemType.equals("weapon") || itemType.equals("food") || itemType.equals("consumable")) {
+                if (itens.get(itemIndex).equals(gp.getPlayer().getEquippedItem())) {
+                    inventoryScreenState = 4;
+                } else if (itemType.equals("weapon") || itemType.equals("food") || itemType.equals("consumable") || itemType.equals("water") || itemType.equals("Coffee")) {
                     inventoryScreenState = 2;
                 } else {
                     inventoryScreenState = 3;
@@ -489,6 +492,22 @@ public class UI {
                 text = "Cancel";
                 drawText(text, stringX, stringY, 45);
                 if (commandNum == 1) {
+                    g2.drawString(">", stringX - gp.tileSize / 4, stringY);
+                }
+            }
+
+            if (inventoryScreenState == 4) {
+                int boxX = selX + gp.tileSize / 2;
+                int boxY = selY + gp.tileSize / 2;
+
+                drawBox("/hud/options_box.png", boxX, boxY, gp.tileSize * 3, gp.tileSize * 3);
+
+                int stringX = boxX + gp.tileSize / 2 + gp.tileSize / 6;
+                int stringY = boxY + 60;
+
+                text = "Cancel";
+                drawText(text, stringX, stringY, 45);
+                if (commandNum == 0) {
                     g2.drawString(">", stringX - gp.tileSize / 4, stringY);
                 }
             }
@@ -651,7 +670,14 @@ public class UI {
                 text = "Damage: " + gun.getDamage() + " pts";
                 drawText(text, x, y+gp.tileSize/2, 40);
 
-                text = gun.getLoad() + "/" + gp.getPlayer().getPlayerAmmo(gun.getFirearmType()).getQuantity();
+                int ammoQuantity;
+                if (!(gp.getPlayer().getPlayerAmmo(gun.getFirearmType()) == null)) {
+                    ammoQuantity = gp.getPlayer().getPlayerAmmo(gun.getFirearmType()).getQuantity();
+                } else {
+                    ammoQuantity = 0;
+                }
+
+                text = gun.getLoad() + "/" + ammoQuantity;
                 drawText(text, x + gp.tileSize*5, y+gp.tileSize, 40);
 
                 y += gp.tileSize + gp.tileSize/4;
@@ -760,12 +786,21 @@ public class UI {
         g2.setColor(Color.white);
         g2.drawString(text, x, y);
 
+        y += gp.tileSize*5/8;
+
+        text = "Cond: ";
+        g2.setColor(Color.white);
+        g2.drawString(text, x, y);
+
         x += gp.tileSize*2;
         y = gp.tileSize/2 - gp.tileSize/8;
         drawPlayerEnergy(x, y);
 
         y += (gp.tileSize/2 + gp.tileSize/6);
         drawPlayerSanity(x, y);
+
+        y += (gp.tileSize/2 + gp.tileSize/4);
+        drawPlayerConditions(x, y);
 
         /* --------------------- TIME STATUS ------------------------ */
 
@@ -854,6 +889,25 @@ public class UI {
         }
     }
 
+    private void drawPlayerConditions(int screenX, int screenY) {
+
+        List<SicknessInjuryEvent> conditions = gp.getPlayer().getConditions();
+
+        for (SicknessInjuryEvent cond : conditions) {
+            switch (cond.getName()) {
+                case "hypotermia":
+                    drawText("Hyp", screenX + 10, screenY + 10, 35);
+                    break;
+                case "fever":
+                    drawText("Fev", screenX + 10, screenY + 10, 35);
+                    break;
+                case "dehydration":
+                    drawText("Deh", screenX + 10, screenY + 10, 35);
+                    break;
+            }
+        }
+    }
+
     private void drawPlayerEnergy(int screenX, int screenY) {
         g2.setColor(Color.yellow);
         int playerLife = gp.getPlayer().getEnergy();
@@ -888,23 +942,15 @@ public class UI {
 
             text = "New Game";
             x = getXforCenteredText(text);
-            y += gp.tileSize * 4;
+            y += gp.tileSize * 5;
             g2.drawString(text, x, y);
             if (commandNum == 0) {
                 g2.drawString(">", x - gp.tileSize, y);
             }
 
-            text = "Load Game";
-            x = getXforCenteredText(text);
-            y += gp.tileSize;
-            g2.drawString(text, x, y);
-            if (commandNum == 1) {
-                g2.drawString(">", x - gp.tileSize, y);
-            }
-
             text = "Quit";
             x = getXforCenteredText(text);
-            y += gp.tileSize;
+            y += gp.tileSize + gp.tileSize/2;
             g2.drawString(text, x, y);
             if (commandNum == 2) {
                 g2.drawString(">", x - gp.tileSize, y);

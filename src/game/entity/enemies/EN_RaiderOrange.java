@@ -2,13 +2,15 @@ package game.entity.enemies;
 
 import game.graphics.GamePanel;
 import game.itens.food.Soup;
+import game.itens.remedios.Bandages;
 import game.itens.weapons.Ammo;
+import game.itens.weapons.Knife;
 import game.itens.weapons.M92;
 import game.itens.weapons.Revolver;
 
 public class EN_RaiderOrange extends Enemy{
     public EN_RaiderOrange(GamePanel gp) {
-        super("Raider", gp, 0, 0, 64, 64, 1, "down", new Revolver());
+        super("Raider", gp, 0, 0, 64, 64, 1, "down", new Knife());
 
         // attributes
         setMaxLife(100);
@@ -17,6 +19,7 @@ public class EN_RaiderOrange extends Enemy{
         loadImage("/enemies/littleguy6.png");
 
         setLoot(new Ammo("pistol", 4));
+        setLoot(new Bandages());
         setLoot(new M92());
         setLoot(new Soup());
     }
